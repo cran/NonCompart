@@ -1,21 +1,29 @@
 \name{IntAUC}
 \alias{IntAUC}
 \title{Calculate interval AUC}
-\description{calculate interval AUC}
+\description{It calculates interval AUC}
 \usage{IntAUC(x, y, t1, t2, Res, Method = "Linear")}
 \arguments{
-  \item{x}{vector values of x-axis, usually time}
-  \item{y}{vector values of y-axis, usually concentration}
+  \item{x}{vector values of independent variable, usually time}
+  \item{y}{vector values of dependent variable, usually concentration}
   \item{t1}{start time for AUC}
   \item{t2}{end time for AUC}
   \item{Res}{result from \code{IndiNCA} function}
-  \item{Method}{one of \code{"Linear"} or \code{"Log"} to indicate the way to calculate AUC}
+  \item{Method}{either of \code{"Linear"} or \code{"Log"} to indicate the way to calculate AUC}
 }
 \details{
-This calculate interval (partial) AUC (from t1 to t2) with the given series of x and y.
-If t1 and/or t2 cannot be found within x vector, it interpolates according to the Method.
+This calculates an interval (partial) AUC (from t1 to t2) with the given series of x and y.
+If t1 and/or t2 cannot be found within x vector, it interpolates according to the \code{Method}.
 }
 \value{return interval AUC value (scalar)}
+\references{
+\enumerate{
+\item Gabrielsson J, Weiner D. Pharmacokinetic and Pharmacodynamic Data Analysis - Concepts and Applications. 5th ed. 2016.
+\item Shargel L, Yu A. Applied Biopharmaceutics and Pharmacokinetics. 7th ed. 2015. 
+\item Rowland M, Tozer TN. Clinical Pharmacokinetics and Pharmacodynamics - Concepts and Applications. 4th ed. 2011.
+\item Gibaldi M, Perrier D. Pharmacokinetics. 2nd ed. revised and expanded. 1982.
+}
+}
 \author{Kyun-Seop Bae <k@acr.kr>}
 \seealso{\code{\link{AUC}}, \code{\link{Interpol}}}
 \examples{

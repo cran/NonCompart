@@ -1,15 +1,15 @@
 \name{Interpol}
 \alias{Interpol}
 \title{Interpolate y value}
-\description{interpolate y value when xnew does not exist within x vector}
+\description{It interpolates y value when a corresponding x value (xnew) does not exist within x vector}
 \usage{Interpol(x, y, xnew, Slope, b0, Method = "Linear")}
 \arguments{
   \item{x}{vector values of x-axis, usually time}
   \item{y}{vector values of y-axis, usually concentration}
-  \item{xnew}{new x point to be interpolated}
+  \item{xnew}{new x point to be interpolated, usually new time point}
   \item{Slope}{slope of regression log(y) ~ x}
   \item{b0}{y value of just left point of xnew}
-  \item{Method}{one of \code{"Linear"} or \code{"Log"} to indicate the way to interpolate}
+  \item{Method}{either of \code{"Linear"} or \code{"Log"} to indicate the way to interpolate}
 }
 \details{
 This function interpolate y value, if xnew is not in x vector.

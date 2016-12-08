@@ -2,13 +2,12 @@ NCA <-
 function(Data, colSubj, colTime, colConc, colTrt, Method="Linear", Dose=0, AdmMode="Extravascular", TimeInfusion=0, Report="Table", iAUC)
 {
   if (!is.numeric(Dose) | !is.numeric(TimeInfusion) | !is.character(AdmMode) | !is.character(Method)) stop("Bad Input!")
-  if (AdmMode == "Infusion" & !(TimeInfusion > 0)) stop("Infusion mode should have TimeInfusion larger than 0!")
 
   colOrd = paste0(AdmMode, "Default")
   ColName00 = RptCfg[RptCfg[,colOrd] > 0, c("PPTESTCD", colOrd)]
   ColName0 = ColName00[order(ColName00[, colOrd]), "PPTESTCD"] ;
 
-  if (!(Dose > 0)) ColName0= setdiff(ColName0, c("CMAXD", "AUCIFOD", "AUCIFPD"))
+  if (!(max(Dose) > 0)) ColName0= setdiff(ColName0, c("CMAXD", "AUCIFOD", "AUCIFPD"))
 
   if (!missing(iAUC)) {
     ColName0 = union(ColName0, as.character(iAUC[,"Name"]))
@@ -16,6 +15,10 @@ function(Data, colSubj, colTime, colConc, colTrt, Method="Linear", Dose=0, AdmMo
 
   SUBJIDs = unique(as.character(Data[,colSubj]))
   nSUBJID = length(SUBJIDs)
+
+  if (length(Dose) > 1 & length(Dose) != nSUBJID) stop("Dose should be fixed or given for each subject!")
+  if (length(TimeInfusion) > 1 & length(TimeInfusion) != nSUBJID) stop("TimeInfusion should be fixed or given for each subject!")
+
   if (missing(colTrt)) {
     Res0 = data.frame(SUBJID=character(), stringsAsFactors=FALSE)
     if (Report == "Table") {
@@ -29,11 +32,23 @@ function(Data, colSubj, colTime, colConc, colTrt, Method="Linear", Dose=0, AdmMo
       if (nrow(Dat) > 0) {
         x = Dat[,colTime]
         y = Dat[,colConc]
+        if (length(Dose) > 1) {
+          cDose = Dose[i]
+        } else {
+          cDose = Dose 
+        }
+        if (length(TimeInfusion) > 1) {
+          cTimeInfusion = TimeInfusion[i]
+        } else {
+          cTimeInfusion = TimeInfusion
+        }
+        if (AdmMode == "Infusion" & !(cTimeInfusion > 0)) stop("Infusion mode should have TimeInfusion larger than 0!")
+
         Res0 = rbind(Res0, data.frame(cSUBJID, stringsAsFactors=FALSE))
         if (!missing(iAUC)) {
-          cResult = IndiNCA(x, y, Method=Method, Dose=Dose, AdmMode=AdmMode, TimeInfusion=TimeInfusion, RetNames=ColName0, Report=Report, iAUC=iAUC)
+          cResult = IndiNCA(x, y, Method=Method, Dose=cDose, AdmMode=AdmMode, TimeInfusion=cTimeInfusion, RetNames=ColName0, Report=Report, iAUC=iAUC)
         } else {
-          cResult = IndiNCA(x, y, Method=Method, Dose=Dose, AdmMode=AdmMode, TimeInfusion=TimeInfusion, RetNames=ColName0, Report=Report)
+          cResult = IndiNCA(x, y, Method=Method, Dose=cDose, AdmMode=AdmMode, TimeInfusion=cTimeInfusion, RetNames=ColName0, Report=Report)
         }
         if (Report == "Table") {
           Result = rbind(Result, cResult)

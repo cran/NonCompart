@@ -1,3 +1,2 @@
 exportPattern("^[[:alpha:]]+")
-importFrom("utils", "packageDescription", "packageVersion")
-importFrom("utils", "data")
+importFrom("utils", "packageDescription", "packageVersion", "data")

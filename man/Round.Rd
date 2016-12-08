@@ -2,7 +2,7 @@
 \alias{Round}
 \title{Round Half Away from Zero}
 \description{
-ordinary rounding function, so called round half away from zero
+This is an ordinary rounding function, so called round half away from zero
 }
 \usage{Round(x, n = 0)}
 \arguments{
@@ -10,7 +10,7 @@ ordinary rounding function, so called round half away from zero
   \item{n}{indicating decimal digits}
 }
 \details{
-\code{round} in R base rounds to the even number, i.e. \code{round(0.5)} is 0 not 1.
+The function \code{round} in R base rounds to the even number, i.e. \code{round(0.5)} is 0 not 1.
 If you want rounding 0.5 be 1, you can use this \code{Round} function.
 This function is for the consistency with other software like MS-Excel, SAS.
 }

@@ -2,10 +2,11 @@
 \alias{NonCompart-package}
 \alias{NonCompart}
 \docType{package}
-\title{Noncompartmental Analysis for Pharmacokinetics}
+\title{Noncompartmental Analysis for Pharmacokinetic Data}
 \description{
-Conduct noncompartmental analysis(NCA) as close as possible to the most widely used commercial pharmacokinetic analysis software.
+It conducts a noncompartmental analysis(NCA) as closely as possible to the most widely used commercial pharmacokinetic analysis software.
 }
+\section{Acknowledgement}{Author thanks for the careful review and valuable input of Dr. Jee Eun Lee.}
 \details{
 The main functions are
 \preformatted{
@@ -14,11 +15,15 @@ NCA	     to perform NCA for many subjects.
 IndiNCA  to perform NCA for one subject.
 }
 }
-\author{{Kyun-Seop Bae <k@acr.kr>}
-Maintainer:{Kyun-Seop Bae <k@acr.kr>}
-}
+\author{{Kyun-Seop Bae <k@acr.kr>}}
+
 \references{
-Rowland M, Tozer TN. Clinical Pharmacokinetics and Pharmacodynamics - Concepts and Applications. 4e. 2011.
+\enumerate{
+\item Gabrielsson J, Weiner D. Pharmacokinetic and Pharmacodynamic Data Analysis - Concepts and Applications. 5th ed. 2016.
+\item Shargel L, Yu A. Applied Biopharmaceutics and Pharmacokinetics. 7th ed. 2015. 
+\item Rowland M, Tozer TN. Clinical Pharmacokinetics and Pharmacodynamics - Concepts and Applications. 4th ed. 2011.
+\item Gibaldi M, Perrier D. Pharmacokinetics. 2nd ed. revised and expanded. 1982.
+}
 }
 \keyword{ package }
 \keyword{ NCA }

@@ -2,12 +2,12 @@
 \alias{Slope}
 \title{Get the Slope of regression log(y) ~ x}
 \description{
-calculate slope with linear regression of log(y) ~ x
+It calculates the slope with linear regression of log(y) ~ x
 }
 \usage{Slope(x, y)}
 \arguments{
-  \item{x}{vector values of x-axis, usually time}
-  \item{y}{vector values of y-axis, usually concentration}
+  \item{x}{vector values of independent variable, usually time}
+  \item{y}{vector values of dependent variable, usually concentration}
 }
 \details{
 With time-concentration curve, you frequently need to estimate slope in log(concentration) ~ time.
@@ -20,9 +20,9 @@ This function is usually called by \code{BestSlope} function and you seldom need
   \item{LAMZ}{negative of slope, lambda_z}
   \item{b0}{intercept of regression line}
   \item{CORRXY}{correlation of log(y) and x}
-  \item{LAMZLL}{earlist x for lambda_z}
+  \item{LAMZLL}{earliest x for lambda_z}
   \item{LAMZUL}{last x for lambda_z}
-  \item{CLSTP}{predicted y value at last point, concentration of last_predicted}
+  \item{CLSTP}{predicted y value at last point, predicted concentration for the last time point}
 }
 \author{Kyun-Seop Bae <k@acr.kr>}
 \seealso{\code{\link{BestSlope}}}

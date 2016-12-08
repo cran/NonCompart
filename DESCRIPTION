@@ -1,10 +1,16 @@
 Package: NonCompart
-Version: 0.2.3
-Date: 2016-11-28
-Title: Noncompartmental Analysis of Pharmacokinetics
-Description: Conduct noncompartmental analysis as close as possible to the most widely used commercial pharmacokinetic analysis software, i.e. 'Phoenix(R) WinNonlin(R)' <https://www.certara.com/software/pkpd-modeling-and-simulation/phoenix-winnonlin/>.
-             For more details on noncompartmental analysis, see the reference: Rowland M, Tozer TN. Clinical Pharmacokinetics and Pharmacodynamics - Concepts and Applications. 4e. 2011. 
-Depends: R (>= 3.0.0)
+Version: 0.2.4
+Date: 2016-12-07
+Title: Noncompartmental Analysis for Pharmacokinetic Data
+Description: Conduct a noncompartmental analysis as closely as possible to the most widely used commercial software for pharmacokinetic analysis, i.e. 'Phoenix(R) WinNonlin(R)' <https://www.certara.com/software/pkpd-modeling-and-simulation/phoenix-winnonlin/>.
+             Some features include:
+             - Use CDISC SDTM PP domain terms.
+             - Automatic slope selection with the same criterion of WinNonlin(R)
+             - Support both 'linear-up linear-down' and 'linear-up log-down' method
+             - Calculate partial(interval) AUC with 'linear' or 'log' interpolation method
+             For more details on noncompartmental analysis, see the reference: Gabrielsson J, Weiner D. Pharmacokinetic and Pharmacodynamic Data Analysis - Concepts and Applications. 5th ed. 2016. (ISBN:9198299107)
+             Acknowldegement: Author thanks for the careful review and valuable input of Dr. Jee Eun Lee.
+Depends: R (>= 2.0.0)
 Author: Kyun-Seop Bae
 Maintainer: Kyun-Seop Bae <k@acr.kr>
 Copyright: 2016, Kyun-Seop Bae
@@ -13,5 +19,5 @@ NeedsCompilation: no
 LazyLoad: yes
 Repository: CRAN
 URL: https://cran.r-project.org/package=NonCompart
-Packaged: 2016-11-27 16:05:52 UTC; K
-Date/Publication: 2016-11-27 18:30:40
+Packaged: 2016-12-07 14:45:11 UTC; K
+Date/Publication: 2016-12-08 01:24:47
