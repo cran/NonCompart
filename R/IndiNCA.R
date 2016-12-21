@@ -7,6 +7,8 @@ function(x, y, Dose=0, Method="Linear", AdmMode="Extravascular", TimeInfusion=0,
   
   x0 = x[1:max(which(y>0))] # Till Non-zero concentration. i.e. removing trailing zeros
   y0 = y[1:max(which(y>0))] # Till Non-zero concentration. i.e. removing trailing zeros
+  x0s = x0[y0 != 0]
+  y0s = y0[y0 != 0]
 
   colOrd = paste0(AdmMode,"Default")
   RetNames0 = RptCfg[RptCfg[,colOrd] > 0,c("PPTESTCD",colOrd)]
@@ -21,7 +23,7 @@ function(x, y, Dose=0, Method="Linear", AdmMode="Extravascular", TimeInfusion=0,
   }
 
   Res = vector()
-  Res[c("R2", "R2ADJ", "LAMZNPT", "LAMZ", "b0", "CORRXY", "LAMZLL", "LAMZUL", "CLSTP")] = BestSlope(x, y, AdmMode)
+  Res[c("R2", "R2ADJ", "LAMZNPT", "LAMZ", "b0", "CORRXY", "LAMZLL", "LAMZUL", "CLSTP")] = BestSlope(x0s, y0s, AdmMode)
 
   C0Imputed = FALSE
   if (AdmMode == "Bolus") {

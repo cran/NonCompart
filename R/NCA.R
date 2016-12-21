@@ -30,8 +30,8 @@ function(Data, colSubj, colTime, colConc, colTrt, Method="Linear", Dose=0, AdmMo
       cSUBJID = SUBJIDs[i]
       Dat = Data[Data[,colSubj]==cSUBJID,]
       if (nrow(Dat) > 0) {
-        x = Dat[,colTime]
-        y = Dat[,colConc]
+        x = as.numeric(Dat[,colTime])
+        y = as.numeric(Dat[,colConc])
         if (length(Dose) > 1) {
           cDose = Dose[i]
         } else {
@@ -76,8 +76,8 @@ function(Data, colSubj, colTime, colConc, colTrt, Method="Linear", Dose=0, AdmMo
         cTRT = TRTs[j]
         Dat = Data[Data[,colSubj]==cSUBJID & Data[,colTrt]==cTRT,]
         if (nrow(Dat) > 0) {
-          x = Dat[,colTime]
-          y = Dat[,colConc]
+          x = as.numeric(Dat[,colTime])
+          y = as.numeric(Dat[,colConc])
           Res0 = rbind(Res0, data.frame(cSUBJID, cTRT, stringsAsFactors=FALSE))
           if (!missing(iAUC)) {
             cResult = IndiNCA(x, y, Method=Method, Dose=Dose, AdmMode=AdmMode, TimeInfusion=TimeInfusion, RetNames=ColName0, Report=Report, iAUC=iAUC)
