@@ -1,6 +1,6 @@
 Package: NonCompart
-Version: 0.2.5
-Date: 2016-12-20
+Version: 0.2.6
+Date: 2017-01-01
 Title: Noncompartmental Analysis for Pharmacokinetic Data
 Description: Conduct a noncompartmental analysis as closely as possible to the most widely used commercial software for pharmacokinetic analysis, i.e. 'Phoenix(R) WinNonlin(R)' <https://www.certara.com/software/pkpd-modeling-and-simulation/phoenix-winnonlin/>.
              Some features include:
@@ -19,5 +19,5 @@ NeedsCompilation: no
 LazyLoad: yes
 Repository: CRAN
 URL: https://cran.r-project.org/package=NonCompart
-Packaged: 2016-12-21 03:30:47 UTC; K
-Date/Publication: 2016-12-21 08:30:22
+Packaged: 2017-01-01 07:07:58 UTC; K
+Date/Publication: 2017-01-01 10:08:58

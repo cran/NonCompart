@@ -83,10 +83,10 @@ function(x, y, Dose=0, Method="Linear", AdmMode="Extravascular", TimeInfusion=0,
     Res["AUCPBEO"] = tabAUC[2,1] / Res["AUCIFO"] * 100
     Res["AUCPBEP"] = tabAUC[2,1] / Res["AUCIFP"] * 100
   } else {
-    if (sum(y==0) > 0) Res["TLAG"] = x[max(which(y==0))] # Trailing zero should not exist
+    if (sum(y0==0) > 0) Res["TLAG"] = x0[max(which(y0==0))] # Trailing zero should not exist
     else Res["TLAG"] = 0
-    if (!is.na(x[x==0][1])) {
-      if(y[x==0] > 0) Res["TLAG"] = 0    # This is WinNonlin logic
+    if (!is.na(x0[x0==0][1])) {
+      if (y0[x0==0] > 0) Res["TLAG"] = 0    # This is WinNonlin logic
     }
   }
 

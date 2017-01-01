@@ -1,8 +1,8 @@
-e7ca60957833abbf418760a481c71092 *DESCRIPTION
+69a8f5f44226ed85b7e46cdf79015e8f *DESCRIPTION
 abad23812bba542f4cfa64cb22ac3da3 *NAMESPACE
 89f7ad83fc8c4355d8faa03d5b47303d *R/AUC.R
 42f104c01e7fbeb15befa84dba0b8f13 *R/BestSlope.R
-472675116aec955d48360fc0494a57ca *R/IndiNCA.R
+82ae94d8fc60372c28c5bd20ddd86ae0 *R/IndiNCA.R
 7be1de2f6335dc84906ea5b24d6fa51f *R/IntAUC.R
 d21c9d8aa25f24c09d43e7241337a608 *R/Interpol.R
 71e3c068a4ea33f21d14c8588bea6d33 *R/LinAUC.R
@@ -11,7 +11,7 @@ d21c9d8aa25f24c09d43e7241337a608 *R/Interpol.R
 34d6d788c7ef0f250a53380ce0cad88e *R/Round.R
 14f3f5553c14a6e77f9056116f272b6d *R/Slope.R
 a8a18d565a61ec2142e164d8ab9795e9 *R/sysdata.rda
-740cd57e6758024044c072175afb1f0a *inst/doc/NonCompart-manual.pdf
+7c3572cd7a35359609f9f07ca5da4e5e *inst/doc/NonCompart-manual.pdf
 0ab95d18289b856519c5fab3424c51e7 *man/AUC.Rd
 3210fdc050566f0516a9ee2cbf82a984 *man/BestSlope.Rd
 7f26faedd818a6ac882d480abef13efe *man/IndiNCA.Rd
@@ -20,7 +20,7 @@ fa7f7f446abaa48b5f8dc1f038490b18 *man/Interpol.Rd
 97ca5982d529fd572093cc11e6ee052f *man/LinAUC.Rd
 ad6e88a38310fbf9da171d161af44bce *man/LogAUC.Rd
 a14badab56ede215a9950cc2efe9d611 *man/NCA.Rd
-580ff36b212f65ee04fe81cc3e6e3ba0 *man/NonCompart_0.2.5-package.Rd
+580ff36b212f65ee04fe81cc3e6e3ba0 *man/NonCompart_0.2.6-package.Rd
 d7d1304a07ff57c6e8d6225fc2401507 *man/Round.Rd
 7442987d0d90d59c327d78aff920dbdb *man/RptCfg.Rd
 2162c683d15478b7400f9852e8258c9e *man/Slope.Rd
