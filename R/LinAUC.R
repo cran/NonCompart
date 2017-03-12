@@ -1,5 +1,4 @@
-LinAUC <-
-function(x, y) # Method="Linear"
+LinAUC = function(x, y) # fit="Linear"
 {
   n = length(x)
   if (n != length(y) | !is.numeric(x) | !is.numeric(y)) stop("Bad Input!")

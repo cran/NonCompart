@@ -6,11 +6,11 @@ It sequentially fits (log(y) ~ x) from the last point of x to the previous point
 It chooses a slope the highest adjusted R-square.
 If the difference is less then 1e-4, it chooses longer slope.
 }
-\usage{BestSlope(x, y, AdmMode = "Extravascular")}
+\usage{BestSlope(x, y, adm = "Extravascular")}
 \arguments{
   \item{x}{vector values of x-axis, usually time}
   \item{y}{vector values of y-axis, usually concentration}
-  \item{AdmMode}{one of \code{"Bolus"} or \code{"Infusion"} or \code{"Extravascular"} to indicate drug administration mode}
+  \item{adm}{one of \code{"Bolus"} or \code{"Infusion"} or \code{"Extravascular"} to indicate drug administration mode}
 }
 \details{
 Choosing the best terminal slope (y in log scale) in pharmacokinetic analysis is somewhat challenging, and it could vary by analysis performer.
@@ -32,7 +32,7 @@ Currently this function uses ordinary least square method(OLS) only.
 \examples{
 BestSlope(Theoph[Theoph$Subject==1, "Time"],Theoph[Theoph$Subject==1, "conc"])
 BestSlope(Indometh[Indometh$Subject==1, "time"],Indometh[Indometh$Subject==1, "conc"],
-          AdmMode="Bolus")
+          adm="Bolus")
 }
 \keyword{Slope}
 \keyword{best fit slope}

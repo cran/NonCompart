@@ -1,5 +1,4 @@
-Slope <-
-function(x, y)
+Slope = function(x, y)
 {
   n = length(x)
   if (n != length(y) | !is.numeric(x) | !is.numeric(y)) stop("Bad Input!")

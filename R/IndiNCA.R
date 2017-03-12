@@ -1,36 +1,40 @@
-IndiNCA <-
-function(x, y, Dose=0, Method="Linear", AdmMode="Extravascular", TimeInfusion=0, RetNames, Report="Table", iAUC)
+IndiNCA = function(x, y, dose=0, fit="Linear", adm="Extravascular", dur=0, report="Table", iAUC="", uTime="h", uConc="ug/L", uDose="mg")
 {
   n = length(x)
-  if (n != length(y) | !is.numeric(x) | !is.numeric(y) | !is.numeric(Dose) | !is.numeric(TimeInfusion) | !is.character(AdmMode) | !is.character(Method)) stop("Bad Input!")
-  if (AdmMode == "Infusion" & !(TimeInfusion > 0)) stop("Infusion mode should have TimeInfusion larger than 0!")
-  
+  if (!is.numeric(x) | !is.numeric(y) | !is.numeric(dose) | !is.numeric(dur) | !is.character(adm) | !is.character(fit)) stop("Check input types!")
+  if (n != length(y)) stop("Length of y is different from the length of x!")
+  if (toproper(adm) == "Infusion" & !(dur > 0)) stop("Infusion mode should have dur larger than 0!")
+
+  x = x[!is.na(x) & !is.na(y)]
+  y = y[!is.na(x) & !is.na(y)]
   x0 = x[1:max(which(y>0))] # Till Non-zero concentration. i.e. removing trailing zeros
   y0 = y[1:max(which(y>0))] # Till Non-zero concentration. i.e. removing trailing zeros
   x0s = x0[y0 != 0]
   y0s = y0[y0 != 0]
 
-  colOrd = paste0(AdmMode,"Default")
+  colOrd = paste0(adm,"Default")
   RetNames0 = RptCfg[RptCfg[,colOrd] > 0,c("PPTESTCD",colOrd)]
-  RetNames = RetNames0[order(RetNames0[,colOrd]),"PPTESTCD"] ;
+  RetNames = RetNames0[order(RetNames0[,colOrd]),"PPTESTCD"]
 
-  if (!(Dose > 0)) RetNames = setdiff(RetNames, c("CMAXD", "AUCIFOD", "AUCIFPD")) 
+  if (!(dose > 0)) RetNames = setdiff(RetNames, c("CMAXD", "AUCIFOD", "AUCIFPD"))
 
-  if (!missing(iAUC)) {
+  if (iAUC != "") {
     if (nrow(iAUC) > 0) {
       RetNames = union(RetNames, as.character(iAUC[,"Name"]))
     }
   }
 
   Res = vector()
-  Res[c("R2", "R2ADJ", "LAMZNPT", "LAMZ", "b0", "CORRXY", "LAMZLL", "LAMZUL", "CLSTP")] = BestSlope(x0s, y0s, AdmMode)
+  tRes = BestSlope(x0s, y0s, adm)
+  if (length(tRes) != 9) tRes = c(NA, NA, 0, NA, NA, NA, NA, NA, NA)
+  Res[c("R2", "R2ADJ", "LAMZNPT", "LAMZ", "b0", "CORRXY", "LAMZLL", "LAMZUL", "CLSTP")] = tRes
 
   C0Imputed = FALSE
-  if (AdmMode == "Bolus") {
+  if (adm == "Bolus") {
     if (y[1] > y[2] & y[2] > 0) {
       C0 = exp(-x[1]*(log(y[2]) - log(y[1]))/(x[2] - x[1]) + log(y[1]))
     } else {
-      C0 =  min(x[y > 0])
+      C0 = min(x[y > 0])
     }
     xa = c(0, x)
     ya = c(C0, y)
@@ -54,9 +58,9 @@ function(x, y, Dose=0, Method="Linear", AdmMode="Extravascular", TimeInfusion=0,
   nxa = length(xa)
   nxa0 = length(xa0)
 
-  tabAUC = AUC(xa0, ya0, Method=Method)
+  tabAUC = AUC(xa0, ya0, fit=fit)
   Res[c("AUCLST","AUMCLST")] = tabAUC[nxa0,]
-  Res["AUCALL"] = AUC(xa, ya, Method=Method)[nxa,1]
+  Res["AUCALL"] = AUC(xa, ya, fit=fit)[nxa,1]
   Res["LAMZHL"] = log(2)/Res["LAMZ"]
   Res["TMAX"] = x[which.max(y)]
   Res["CMAX"] = max(y)
@@ -72,13 +76,13 @@ function(x, y, Dose=0, Method="Linear", AdmMode="Extravascular", TimeInfusion=0,
   Res["AUMCPEO"] = (1 - Res["AUMCLST"]/Res["AUMCIFO"])*100
   Res["AUMCPEP"] = (1 - Res["AUMCLST"]/Res["AUMCIFP"])*100
 
-  if (Dose > 0) {
-    Res["CMAXD"] = Res["CMAX"] / Dose
-    Res["AUCIFOD"] = Res["AUCIFO"] / Dose
-    Res["AUCIFPD"] = Res["AUCIFP"] / Dose
+  if (dose > 0) {
+    Res["CMAXD"] = Res["CMAX"] / dose
+    Res["AUCIFOD"] = Res["AUCIFO"] / dose
+    Res["AUCIFPD"] = Res["AUCIFP"] / dose
   }
 
-  if (AdmMode == "Bolus") {
+  if (adm == "Bolus") {
     Res["C0"] = C0                      # Phoneix WinNonlin 6.4 User's Guide p27
     Res["AUCPBEO"] = tabAUC[2,1] / Res["AUCIFO"] * 100
     Res["AUCPBEP"] = tabAUC[2,1] / Res["AUCIFP"] * 100
@@ -90,50 +94,50 @@ function(x, y, Dose=0, Method="Linear", AdmMode="Extravascular", TimeInfusion=0,
     }
   }
 
-  if (AdmMode == "Extravascular") {
-    Res["VZFO"] = Dose/Res["AUCIFO"]/Res["LAMZ"]
-    Res["VZFP"] = Dose/Res["AUCIFP"]/Res["LAMZ"]
-    Res["CLFO"] = Dose/Res["AUCIFO"]
-    Res["CLFP"] = Dose/Res["AUCIFP"]
+  if (adm == "Extravascular") {
+    Res["VZFO"] = dose/Res["AUCIFO"]/Res["LAMZ"] * as.numeric(unit("VZFO", uTime=uTime, uConc=uConc, uDose=uDose)[2])
+    Res["VZFP"] = dose/Res["AUCIFP"]/Res["LAMZ"] * as.numeric(unit("VZFP", uTime=uTime, uConc=uConc, uDose=uDose)[2])
+    Res["CLFO"] = dose/Res["AUCIFO"] * as.numeric(unit("CLFO", uTime=uTime, uConc=uConc, uDose=uDose)[2])
+    Res["CLFP"] = dose/Res["AUCIFP"] * as.numeric(unit("CLFP", uTime=uTime, uConc=uConc, uDose=uDose)[2])
     Res["MRTEVLST"] = Res["AUMCLST"]/Res["AUCLST"]
     Res["MRTEVIFO"] = Res["AUMCIFO"]/Res["AUCIFO"]
     Res["MRTEVIFP"] = Res["AUMCIFP"]/Res["AUCIFP"]
   } else {
-    Res["VZO"] = Dose/Res["AUCIFO"]/Res["LAMZ"]
-    Res["VZP"] = Dose/Res["AUCIFP"]/Res["LAMZ"]
-    Res["CLO"] = Dose/Res["AUCIFO"]
-    Res["CLP"] = Dose/Res["AUCIFP"]
-    Res["MRTIVLST"] = Res["AUMCLST"]/Res["AUCLST"] - TimeInfusion/2
-    Res["MRTIVIFO"] = Res["AUMCIFO"]/Res["AUCIFO"] - TimeInfusion/2
-    Res["MRTIVIFP"] = Res["AUMCIFP"]/Res["AUCIFP"] - TimeInfusion/2
+    Res["VZO"] = dose/Res["AUCIFO"]/Res["LAMZ"] * as.numeric(unit("VZO", uTime=uTime, uConc=uConc, uDose=uDose)[2])
+    Res["VZP"] = dose/Res["AUCIFP"]/Res["LAMZ"] * as.numeric(unit("VZP", uTime=uTime, uConc=uConc, uDose=uDose)[2])
+    Res["CLO"] = dose/Res["AUCIFO"] * as.numeric(unit("CLO", uTime=uTime, uConc=uConc, uDose=uDose)[2])
+    Res["CLP"] = dose/Res["AUCIFP"] * as.numeric(unit("CLP", uTime=uTime, uConc=uConc, uDose=uDose)[2])
+    Res["MRTIVLST"] = Res["AUMCLST"]/Res["AUCLST"] - dur/2
+    Res["MRTIVIFO"] = Res["AUMCIFO"]/Res["AUCIFO"] - dur/2
+    Res["MRTIVIFP"] = Res["AUMCIFP"]/Res["AUCIFP"] - dur/2
     Res["VSSO"] = Res["MRTIVIFO"] * Res["CLO"]
     Res["VSSP"] = Res["MRTIVIFP"] * Res["CLP"]
   }
 
-  if (!missing(iAUC)) {
+  if (iAUC!="") {
     for (i in 1:nrow(iAUC)) {
-      if (AdmMode == "Bolus") Res[as.character(iAUC[i,"Name"])] = IntAUC(xa, ya, iAUC[i,"Start"], iAUC[i,"End"], Res, Method=Method)
-      else Res[as.character(iAUC[i,"Name"])] = IntAUC(x, y, iAUC[i,"Start"], iAUC[i,"End"], Res, Method=Method)
+      if (adm == "Bolus") Res[as.character(iAUC[i,"Name"])] = IntAUC(xa, ya, iAUC[i,"Start"], iAUC[i,"End"], Res, fit=fit)
+      else Res[as.character(iAUC[i,"Name"])] = IntAUC(x, y, iAUC[i,"Start"], iAUC[i,"End"], Res, fit=fit)
     }
   }
 
-  if (Report == "Table") {
+  if (report == "Table") {
     Result = Res[RetNames]
-  } else if (Report == "Text") {
-    
+  } else if (report == "Text") {
+
  # Begin Making Summary Table
     iL = which(xa0==Res["LAMZLL"])
     iU = which(xa0==Res["LAMZUL"])
     xr0 = xa0[iL:iU]
-    yr0 = ya0[iL:iU] 
+    yr0 = ya0[iL:iU]
     ypr = exp(Res["b0"] - Res["LAMZ"]*xr0)
     yre = yr0 - ypr
- # End Making Summary Table  
+ # End Making Summary Table
     DateTime = strsplit(as.character(Sys.time())," ")[[1]]
 
     Result = vector()
     cLineNo = 1
-    Result[cLineNo] = paste("                        NONCOMPARTMENTAL ANALYSIS REPORT") ; cLineNo = cLineNo + 1 
+    Result[cLineNo] = paste("                        NONCOMPARTMENTAL ANALYSIS REPORT") ; cLineNo = cLineNo + 1
     Result[cLineNo] = paste0("                       Package version ", packageVersion("NonCompart"), " (", packageDescription("NonCompart")$Date, ")") ; cLineNo = cLineNo + 1
     Result[cLineNo] = paste("                         ", version$version.string) ; cLineNo = cLineNo + 1
     Result[cLineNo] = "" ; cLineNo = cLineNo + 1
@@ -141,21 +145,21 @@ function(x, y, Dose=0, Method="Linear", AdmMode="Extravascular", TimeInfusion=0,
     Result[cLineNo] = "" ; cLineNo = cLineNo + 1
     Result[cLineNo] = "Calculation Setting" ; cLineNo = cLineNo + 1
     Result[cLineNo] = "-------------------" ; cLineNo = cLineNo + 1
-    if (AdmMode == "Bolus") { Adm = "Bolus IV" }
-    else if (AdmMode == "Infusion") { Adm = "Constant Infusion" }
+    if (adm == "Bolus") { Adm = "Bolus IV" }
+    else if (adm == "Infusion") { Adm = "Constant Infusion" }
     else { Adm = "Extravascular" }
     Result[cLineNo] = paste("Drug Administration:", Adm) ; cLineNo = cLineNo + 1
     Result[cLineNo] = paste("Observation count excluding trailing zero:", length(x0)) ; cLineNo = cLineNo + 1
-    Result[cLineNo] = paste("Dose at time 0:", Dose) ; cLineNo = cLineNo + 1
-    if (AdmMode == "Infusion") {
-      Result[cLineNo] = paste("Length of Infusion:", TimeInfusion) ; cLineNo = cLineNo + 1
+    Result[cLineNo] = paste("dose at time 0:", dose) ; cLineNo = cLineNo + 1
+    if (adm == "Infusion") {
+      Result[cLineNo] = paste("Length of Infusion:", dur) ; cLineNo = cLineNo + 1
     }
-    if (Method == "Linear") {
-      Result[cLineNo] = "AUC Calculation method: Linear-up Linear-down method" ; cLineNo = cLineNo + 1
-    } else if (Method == "Log") {
-      Result[cLineNo] = "AUC Calculation method: Linear-up Log-down method" ; cLineNo = cLineNo + 1
+    if (fit == "Linear") {
+      Result[cLineNo] = "AUC Calculation Method: Linear-up Linear-down fit" ; cLineNo = cLineNo + 1
+    } else if (fit == "Log") {
+      Result[cLineNo] = "AUC Calculation Method: Linear-up Log-down fit" ; cLineNo = cLineNo + 1
     } else {
-      Result[cLineNo] = paste("AUC Calculation method: Unknown") ; cLineNo = cLineNo + 1
+      Result[cLineNo] = paste("AUC Calculation Method: Unknown") ; cLineNo = cLineNo + 1
     }
     Result[cLineNo] = "Weighting for lambda z: Uniform (Ordinary Least Square, OLS)" ; cLineNo = cLineNo + 1
     Result[cLineNo] = "Lambda z selection criterion: Heighest adjusted R-squared value with precision=1e-4" ; cLineNo = cLineNo + 1
@@ -165,7 +169,7 @@ function(x, y, Dose=0, Method="Linear", AdmMode="Extravascular", TimeInfusion=0,
     Result[cLineNo] = "-------------------------" ; cLineNo = cLineNo + 1
     Result[cLineNo] = "      Time         Conc.      Pred.   Residual       AUC       AUMC      Weight" ; cLineNo = cLineNo + 1
     Result[cLineNo] = "-------------------------------------------------------------------------------" ; cLineNo = cLineNo + 1
-    for (i in 1:length(xa0)) {   
+    for (i in 1:length(xa0)) {
       Str = sprintf("%11.4f", Round(xa0[i],4))
       if (C0Imputed & i == 1) { Str = paste(Str, "+") }
       else if (i >= iL & i <= iU) { Str = paste(Str, "*") }
@@ -178,11 +182,11 @@ function(x, y, Dose=0, Method="Linear", AdmMode="Extravascular", TimeInfusion=0,
       Str = paste(Str, sprintf("%10.4f", Round(tabAUC[i,1], 4)))
       Str = paste(Str, sprintf("%10.4f", Round(tabAUC[i,2], 4)))
       if (i >= iL & i <= iU) { Str = paste(Str, sprintf("%10.4f",Round(1, 4))) }
-      else { Str = paste(Str, "           ") }
+      else { Str = paste(Str, "") }
       Result[cLineNo] = Str ; cLineNo = cLineNo + 1
     }
     Result[cLineNo] = "" ; cLineNo = cLineNo + 1
-    if (C0Imputed) {   
+    if (C0Imputed) {
       Result[cLineNo] = "+: Back extrapolated concentration" ; cLineNo = cLineNo + 1
     }
     Result[cLineNo] = "*: Used for the calculation of Lambda z." ; cLineNo = cLineNo + 1
@@ -193,13 +197,13 @@ function(x, y, Dose=0, Method="Linear", AdmMode="Extravascular", TimeInfusion=0,
     for (i in 1:length(RetNames)) {
       SYNO = RptCfg[RptCfg$PPTESTCD==RetNames[i],"SYNONYM"]
       if (RetNames[i] == "LAMZNPT") {
-        Result[cLineNo] = paste(sprintf("%-10s", RetNames[i]), sprintf("%-40s", SYNO), sprintf("%8d", Round(Res[RetNames[i]], 4))) ; cLineNo = cLineNo + 1    
-      } else {  
-        Result[cLineNo] = paste(sprintf("%-10s", RetNames[i]), sprintf("%-40s", SYNO), sprintf("%13.4f", Round(Res[RetNames[i]], 4))) ; cLineNo = cLineNo + 1
+        Result[cLineNo] = paste(sprintf("%-10s", RetNames[i]), sprintf("%-40s", SYNO), sprintf("%8d", Round(Res[RetNames[i]], 4))) ; cLineNo = cLineNo + 1
+      } else {
+        Result[cLineNo] = paste(sprintf("%-10s", RetNames[i]), sprintf("%-40s", SYNO), sprintf("%13.4f", Round(Res[RetNames[i]], 4)), unit(uTime=uTime, uConc=uConc, uDose=uDose, RetNames[i])[1]) ; cLineNo = cLineNo + 1
       }
     }
   } else {
-    stop("Unknown Report Type!")
+    stop("Unknown report type!")
   }
 
   return(Result)

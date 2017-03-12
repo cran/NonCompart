@@ -27,6 +27,6 @@ This function returns AUC and AUMC by linear-up log-down method.
 \examples{
 LogAUC(Theoph[Theoph$Subject==1, "Time"],Theoph[Theoph$Subject==1, "conc"])
 # Compare the last line with the above
-AUC(Theoph[Theoph$Subject==1, "Time"],Theoph[Theoph$Subject==1, "conc"], Method="Log") 
+AUC(Theoph[Theoph$Subject==1, "Time"],Theoph[Theoph$Subject==1, "conc"], fit="Log") 
 }
 \keyword{AUC}

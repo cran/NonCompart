@@ -11,33 +11,33 @@ Equal = function(Wres, Rres)
 }
 
 Wres = read.csv("Final_Parameters_Pivoted_Theoph_Linear.csv")
-Rres = NCA(Theoph, "Subject", "Time", "conc", Dose=320)
+Rres = NCA(Theoph, "Subject", "Time", "conc", dose=320)
 if (!Equal(Wres, Rres)) stop("Test Failed!")
 
 Wres = read.csv("Final_Parameters_Pivoted_Theoph_Log.csv")
-Rres = NCA(Theoph, "Subject", "Time", "conc", Dose=320, Method="Log")
+Rres = NCA(Theoph, "Subject", "Time", "conc", dose=320, fit="Log")
 if (!Equal(Wres, Rres)) stop("Test Failed!")
 
 Wres = read.csv("Final_Parameters_Pivoted_Indometh_Linear.csv")
-Rres = NCA(Indometh, "Subject", "time", "conc", Dose=25, AdmMode="Bolus")
+Rres = NCA(Indometh, "Subject", "time", "conc", dose=25, adm="Bolus")
 if (!Equal(Wres, Rres)) stop("Test Failed!")
 
 Wres = read.csv("Final_Parameters_Pivoted_Indometh_Log.csv")
-Rres = NCA(Indometh, "Subject", "time", "conc", Dose=25, AdmMode="Bolus", Method="Log")
+Rres = NCA(Indometh, "Subject", "time", "conc", dose=25, adm="Bolus", fit="Log")
 if (!Equal(Wres, Rres)) stop("Test Failed!")
 
 Wres = read.csv("Final_Parameters_Pivoted_Indometh_Linear_Infusion.csv")
-Rres = NCA(Indometh, "Subject", "time", "conc", Dose=25, AdmMode="Infusion", TimeInfusion=0.25)
+Rres = NCA(Indometh, "Subject", "time", "conc", dose=25, adm="Infusion", dur=0.25)
 if (!Equal(Wres, Rres)) stop("Test Failed!")
 
 Wres = read.csv("Final_Parameters_Pivoted_Indometh_Log_Infusion.csv")
-Rres = NCA(Indometh, "Subject", "time", "conc", Dose=25, AdmMode="Infusion", TimeInfusion=0.25, Method="Log")
+Rres = NCA(Indometh, "Subject", "time", "conc", dose=25, adm="Infusion", dur=0.25, fit="Log")
 if (!Equal(Wres, Rres)) stop("Test Failed!")
 
 Wres = read.csv("Final_Parameters_Pivoted_Indometh_Linear_Wrong_Extravascular.csv")
-Rres = NCA(Indometh, "Subject", "time", "conc", Dose=25)
+Rres = NCA(Indometh, "Subject", "time", "conc", dose=25)
 if (!Equal(Wres, Rres)) stop("Test Failed!")
 
 Wres = read.csv("Final_Parameters_Pivoted_Indometh_Log_Wrong_Extravascular.csv")
-Rres = NCA(Indometh, "Subject", "time", "conc", Dose=25, Method="Log")
+Rres = NCA(Indometh, "Subject", "time", "conc", dose=25, fit="Log")
 if (!Equal(Wres, Rres)) stop("Test Failed!")

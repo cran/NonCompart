@@ -2,18 +2,20 @@
 \alias{IndiNCA}
 \title{Noncompartmental Analysis for an Individual}
 \description{It performs a noncompartmental analysis with one subject data}
-\usage{IndiNCA(x, y, Dose = 0, Method = "Linear", AdmMode = "Extravascular", TimeInfusion = 0,
-               RetNames, Report = "Table", iAUC)}
+\usage{IndiNCA(x, y, dose = 0, fit = "Linear", adm = "Extravascular", dur = 0,
+               report = "Table", iAUC = "", uTime = "h", uConc = "ug/L", uDose = "mg")}
 \arguments{
   \item{x}{vector values of independent variable, usually time}
   \item{y}{vector values of dependent variable, usually concentration}
-  \item{Dose}{administered dose for the subject}
-  \item{Method}{either of \code{"Linear"} or \code{"Log"} to indicate the way to calculate AUC and AUMC}
-  \item{AdmMode}{one of \code{"Bolus"} or \code{"Infusion"} or \code{"Extravascular"} to indicate drug administration mode}
-  \item{TimeInfusion}{infusion duration for constant infusion, otherwise 0}
-  \item{RetNames}{character vector for the pharmacokinetic parameter names to be returned}
-  \item{Report}{either of \code{"Table"} or \code{"Text"} to specify the type of return value}
+  \item{dose}{administered dose for the subject}
+  \item{fit}{either of \code{"Linear"} or \code{"Log"} to indicate the way to calculate AUC and AUMC}
+  \item{adm}{one of \code{"Bolus"} or \code{"Infusion"} or \code{"Extravascular"} to indicate drug administration mode}
+  \item{dur}{infusion duration for constant infusion, otherwise 0}
+  \item{report}{either of \code{"Table"} or \code{"Text"} to specify the type of return value}
   \item{iAUC}{data.frame with three columns, "Name", "Start", "End" to specify the invervals for partial (interval) AUC}
+  \item{uTime}{unit of time}
+  \item{uConc}{unit of concentration}
+  \item{uDose}{unit of dose}
 }
 \details{
   This performs a noncompartmental analysis for a subject. It returns practically the same result with the most popular commercial software.
@@ -78,26 +80,26 @@
 \author{Kyun-Seop Bae <k@acr.kr>}
 \seealso{\code{\link{AUC}}, \code{\link{BestSlope}}}
 \examples{
-IndiNCA(Theoph[Theoph$Subject==1,"Time"], Theoph[Theoph$Subject==1, "conc"], Dose=320)
-IndiNCA(Indometh[Indometh$Subject==1,"time"], Indometh[Indometh$Subject==1, "conc"], Dose=25,
-        AdmMode="Bolus")
-IndiNCA(Indometh[Indometh$Subject==1,"time"], Indometh[Indometh$Subject==1, "conc"], Dose=25,
-        AdmMode="Infusion", TimeInfusion=0.25)
+IndiNCA(Theoph[Theoph$Subject==1,"Time"], Theoph[Theoph$Subject==1, "conc"], dose=320, uConc="mg/L")
+IndiNCA(Indometh[Indometh$Subject==1,"time"], Indometh[Indometh$Subject==1, "conc"], dose=25,
+        adm="Bolus", uConc="mg/L")
+IndiNCA(Indometh[Indometh$Subject==1,"time"], Indometh[Indometh$Subject==1, "conc"], dose=25,
+        adm="Infusion", dur=0.25, uConc="mg/L")
 
-IndiNCA(Theoph[Theoph$Subject==1,"Time"], Theoph[Theoph$Subject==1, "conc"], Dose=320,
-        Report="Text")
-IndiNCA(Indometh[Indometh$Subject==1,"time"], Indometh[Indometh$Subject==1, "conc"], Dose=25,
-        AdmMode="Bolus", Report="Text")
-IndiNCA(Indometh[Indometh$Subject==1,"time"], Indometh[Indometh$Subject==1, "conc"], Dose=25,
-        AdmMode="Infusion", TimeInfusion=0.25, Report="Text")
+IndiNCA(Theoph[Theoph$Subject==1,"Time"], Theoph[Theoph$Subject==1, "conc"], dose=320,
+        report="Text", uConc="mg/L")
+IndiNCA(Indometh[Indometh$Subject==1,"time"], Indometh[Indometh$Subject==1, "conc"], dose=25,
+        adm="Bolus", report="Text", uConc="mg/L")
+IndiNCA(Indometh[Indometh$Subject==1,"time"], Indometh[Indometh$Subject==1, "conc"], dose=25,
+        adm="Infusion", dur=0.25, report="Text", uConc="mg/L")
 
 iAUC = data.frame(Name=c("AUC[0-12h]","AUC[0-24h]"), Start=c(0,0), End=c(12,24)) ; iAUC
-IndiNCA(Theoph[Theoph$Subject==1,"Time"], Theoph[Theoph$Subject==1, "conc"], Dose=320,
-        iAUC=iAUC)
-IndiNCA(Indometh[Indometh$Subject==1,"time"], Indometh[Indometh$Subject==1, "conc"], Dose=25,
-        AdmMode="Bolus", iAUC=iAUC)
-IndiNCA(Indometh[Indometh$Subject==1,"time"], Indometh[Indometh$Subject==1, "conc"], Dose=25,
-        AdmMode="Infusion", TimeInfusion=0.25, iAUC=iAUC)
+IndiNCA(Theoph[Theoph$Subject==1,"Time"], Theoph[Theoph$Subject==1, "conc"], dose=320,
+        iAUC=iAUC, uConc="mg/L")
+IndiNCA(Indometh[Indometh$Subject==1,"time"], Indometh[Indometh$Subject==1, "conc"], dose=25,
+        adm="Bolus", iAUC=iAUC, uConc="mg/L")
+IndiNCA(Indometh[Indometh$Subject==1,"time"], Indometh[Indometh$Subject==1, "conc"], dose=25,
+        adm="Infusion", dur=0.25, iAUC=iAUC, uConc="mg/L")
 }
 \keyword{NCA}
 \keyword{noncompartmenal analysis}

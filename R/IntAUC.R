@@ -1,5 +1,4 @@
-IntAUC <-
-function(x, y, t1, t2, Res, Method="Linear")
+IntAUC = function(x, y, t1, t2, Res, fit="Linear")
 {
   n = length(x)
   if (n != length(y) | !is.numeric(x) | !is.numeric(y)) stop("Bad Input!")
@@ -8,20 +7,20 @@ function(x, y, t1, t2, Res, Method="Linear")
   tL = Res["TLST"]
   if (t2 > tL & is.na(Res["LAMZ"])) return(NA)
 
-  newSeries = Interpol(x, y, t1, Res["LAMZ"], Res["b0"], Method=Method)
-  newSeries = Interpol(newSeries[[1]], newSeries[[2]], t2, Res["LAMZ"], Res["b0"], Method=Method)
+  newSeries = Interpol(x, y, t1, Res["LAMZ"], Res["b0"], fit=fit)
+  newSeries = Interpol(newSeries[[1]], newSeries[[2]], t2, Res["LAMZ"], Res["b0"], fit=fit)
   x = newSeries[[1]]
   y = newSeries[[2]]
 
-  if (Method=="Linear") {
+  if (fit=="Linear") {
     if (t2 <= tL) {
       ResIntAUC = LinAUC(x[x>=t1 & x<=t2], y[x>=t1 & x<=t2])[[1]]
     } else {
       ResIntAUC = LinAUC(x[x>=t1 & x<=tL], y[x>=t1 & x<=tL])[[1]] + LogAUC(x[x>=tL & x<=t2], y[x>=tL & x<=t2])[[1]]
     }
-  } else if (Method=="Log") {
+  } else if (fit=="Log") {
     ResIntAUC = LogAUC(x[x>=t1 & x<=t2], y[x>=t1 & x<=t2])[[1]]
-  } else stop("Unknown Method!")
+  } else stop("Unknown fit!")
 
   return(ResIntAUC)
 }

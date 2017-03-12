@@ -4,20 +4,24 @@
 \description{
 conduct noncompartmental analysis for many subjects in a data table
 }
-\usage{NCA(Data, colSubj, colTime, colConc, colTrt, Method = "Linear", Dose = 0, 
-           AdmMode = "Extravascular", TimeInfusion = 0, Report = "Table", iAUC)}
+\usage{NCA(concData, id, Time, conc, trt="", fit = "Linear", dose = 0, 
+           adm = "Extravascular", dur = 0, report = "Table", iAUC = "", 
+           uTime = "h", uConc = "ug/L", uDose = "mg")}
 \arguments{
-  \item{Data}{name of data table containing time-concentration data of multiple subjects}
-  \item{colSubj}{column name for subject ID}
-  \item{colTime}{column name for the time}
-  \item{colConc}{column name for the concentration}
-  \item{colTrt}{column name for the treatment code. This is useful for crossover study like bioequivalence trial.}
-  \item{Method}{one of \code{"Linear"} or \code{"Log"} to indicate the way to calculate AUC}
-  \item{Dose}{administered dose. One should be careful for the unit. This can be a vector containing dose for each subject in order.}
-  \item{AdmMode}{one of \code{"Bolus"} or \code{"Infusion"} or \code{"Extravascular"} to indicate drug administration mode}
-  \item{TimeInfusion}{infusion duration for constant infusion, otherwise 0.  This can be a vector containing values for each subject in order.}
-  \item{Report}{either of \code{"Table"} or \code{"Text"} to specify the type of return value}
+  \item{concData}{name of data table containing time-concentration data of multiple subjects}
+  \item{id}{column name for subject ID}
+  \item{Time}{column name for the time}
+  \item{conc}{column name for the concentration}
+  \item{trt}{column name for the treatment code. This is useful for crossover study like bioequivalence trial.}
+  \item{fit}{one of \code{"Linear"} or \code{"Log"} to indicate the way to calculate AUC}
+  \item{dose}{administered dose. One should be careful for the unit. This can be a vector containing dose for each subject in order.}
+  \item{adm}{one of \code{"Bolus"} or \code{"Infusion"} or \code{"Extravascular"} to indicate drug administration mode}
+  \item{dur}{infusion duration for constant infusion, otherwise 0.  This can be a vector containing values for each subject in order.}
+  \item{report}{either of \code{"Table"} or \code{"Text"} to specify the type of return value}
   \item{iAUC}{data.frame with three columns, "Name", "Start", "End" to specify partial interval AUC}
+  \item{uTime}{unit of time}
+  \item{uConc}{unit of concentration}
+  \item{uDose}{unit of dose}
 }
 \details{
   This function calls \code{IndiNCA} repeatedly to do NCA for each subject.
@@ -84,24 +88,24 @@ conduct noncompartmental analysis for many subjects in a data table
 \seealso{\code{\link{IndiNCA}}}
 \examples{
 # Theoph and Indometh data: dose in mg, conc in mg/L, time in h
-NCA(Theoph, "Subject", "Time", "conc", Dose=320)
-NCA(Indometh, "Subject", "time", "conc", Dose=25, AdmMode="Bolus")
+NCA(Theoph, "Subject", "Time", "conc", dose=320, uConc="mg/L")
+NCA(Indometh, "Subject", "time", "conc", dose=25, adm="Bolus", uConc="mg/L")
 
 iAUC = data.frame(Name=c("AUC[0-12h]","AUC[0-24h]"), Start=c(0,0), End=c(12,24)) ; iAUC
-NCA(Theoph, "Subject", "Time", "conc", Dose=320, iAUC=iAUC)
-NCA(Indometh, "Subject", "time", "conc", Dose=25, AdmMode="Bolus", iAUC=iAUC)
+NCA(Theoph, "Subject", "Time", "conc", dose=320, iAUC=iAUC, uConc="mg/L")
+NCA(Indometh, "Subject", "time", "conc", dose=25, adm="Bolus", iAUC=iAUC, uConc="mg/L")
 
-writeLines(NCA(Theoph, "Subject", "Time", "conc", Dose=320, Report="Text"),
+writeLines(NCA(Theoph, "Subject", "Time", "conc", dose=320, report="Text", uConc="mg/L"),
            "Theoph_Linear_CoreOutput.txt")
-writeLines(NCA(Theoph, "Subject", "Time", "conc", Dose=320, Method="Log", Report="Text"),
-           "Theoph_Log_CoreOutput.txt")
-writeLines(NCA(Indometh, "Subject", "time", "conc", Dose=25, AdmMode="Bolus", Report="Text"),
-           "Indometh_Bolus_Linear_CoreOutput.txt")
-writeLines(NCA(Indometh, "Subject", "time", "conc", Dose=25, AdmMode="Bolus", Method="Log",
-           Report="Text"), "Indometh_Bolus_Log_CoreOutput.txt")
-writeLines(NCA(Indometh, "Subject", "time", "conc", Dose=25, AdmMode="Infusion", TimeInfusion=0.25,
-           Report="Text"), "Indometh_Infusion_Linear_CoreOutput.txt")
-writeLines(NCA(Indometh, "Subject", "time", "conc", Dose=25, AdmMode="Infusion", TimeInfusion=0.25,
-           Method="Log", Report="Text"), "Indometh_Infusion_Log_CoreOutput.txt")
+writeLines(NCA(Theoph, "Subject", "Time", "conc", dose=320, fit="Log", report="Text", 
+           uConc="mg/L"), "Theoph_Log_CoreOutput.txt")
+writeLines(NCA(Indometh, "Subject", "time", "conc", dose=25, adm="Bolus", report="Text", 
+           uConc="mg/L"), "Indometh_Bolus_Linear_CoreOutput.txt")
+writeLines(NCA(Indometh, "Subject", "time", "conc", dose=25, adm="Bolus", fit="Log",
+           report="Text", uConc="mg/L"), "Indometh_Bolus_Log_CoreOutput.txt")
+writeLines(NCA(Indometh, "Subject", "time", "conc", dose=25, adm="Infusion", dur=0.25,
+           report="Text", uConc="mg/L"), "Indometh_Infusion_Linear_CoreOutput.txt")
+writeLines(NCA(Indometh, "Subject", "time", "conc", dose=25, adm="Infusion", dur=0.25,
+           fit="Log", report="Text", uConc="mg/L"), "Indometh_Infusion_Log_CoreOutput.txt")
 }
 \keyword{NCA}

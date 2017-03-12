@@ -1,5 +1,4 @@
-LogAUC <-
-function(x, y) # Method="Log" means Linear-Up Log-Down
+LogAUC = function(x, y) # fit="Log" means Linear-Up Log-Down
 {
   n = length(x)
   if (n != length(y) | !is.numeric(x) | !is.numeric(y)) stop("Bad Input!")

@@ -1,5 +1,4 @@
-Interpol <-
-function(x, y, xnew, Slope, b0, Method="Linear")
+Interpol = function(x, y, xnew, Slope, b0, fit="Linear")
 {
   n = length(x)
   if (n != length(y) | !is.numeric(x) | !is.numeric(y)) stop("Bad Input!")
@@ -19,13 +18,13 @@ function(x, y, xnew, Slope, b0, Method="Linear")
   } else RIGHT = FALSE
 
   if (LEFT==TRUE & RIGHT==TRUE) {
-    if (Method=="Log" & y2 < y1 & y2 > 0) ynew = exp(log(y1) + (log(y2) - log(y1))/(x2 - x1)*(xnew - x1))
-    else                                  ynew = y1 + (y2 - y1)/(x2 - x1)*(xnew - x1)
+    if (fit=="Log" & y2 < y1 & y2 > 0) ynew = exp(log(y1) + (log(y2) - log(y1))/(x2 - x1)*(xnew - x1))
+    else                                     ynew = y1 + (y2 - y1)/(x2 - x1)*(xnew - x1)
   }
 
   if (LEFT==TRUE & RIGHT==FALSE) ynew = exp(b0 - Slope*xnew)  # NOT ynew = exp(log(y1) - Slope*(xnew - x1))
   if (LEFT==FALSE & RIGHT==TRUE) ynew = y2/x2 * xnew
   if (LEFT==FALSE & RIGHT==FALSE) stop("Bad Input!")
 
-  return(list(sort(c(x,xnew)),c(y,ynew)[order(c(x,xnew))]))
+  return(list(sort(c(x,xnew)), c(y,ynew)[order(c(x,xnew))]))
 }
