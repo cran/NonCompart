@@ -1,4 +1,4 @@
-LinAUC = function(x, y) # fit="Linear"
+LinAUC = function(x, y) # down="Linear"
 {
   n = length(x)
   if (n != length(y) | !is.numeric(x) | !is.numeric(y)) stop("Bad Input!")

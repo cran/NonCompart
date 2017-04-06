@@ -14,7 +14,7 @@ If the difference is less then 1e-4, it chooses longer slope.
 }
 \details{
 Choosing the best terminal slope (y in log scale) in pharmacokinetic analysis is somewhat challenging, and it could vary by analysis performer.
-Currently this function uses ordinary least square method(OLS) only.
+Currently this function uses ordinary least square method (OLS) only.
 }
 \value{
   \item{R2}{R-squared}
@@ -30,9 +30,8 @@ Currently this function uses ordinary least square method(OLS) only.
 \author{Kyun-Seop Bae <k@acr.kr>}
 \seealso{\code{\link{Slope}}}
 \examples{
-BestSlope(Theoph[Theoph$Subject==1, "Time"],Theoph[Theoph$Subject==1, "conc"])
-BestSlope(Indometh[Indometh$Subject==1, "time"],Indometh[Indometh$Subject==1, "conc"],
+BestSlope(Theoph[Theoph$Subject==1, "Time"], Theoph[Theoph$Subject==1, "conc"])
+BestSlope(Indometh[Indometh$Subject==1, "time"], Indometh[Indometh$Subject==1, "conc"],
           adm="Bolus")
 }
 \keyword{Slope}
-\keyword{best fit slope}

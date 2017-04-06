@@ -27,6 +27,6 @@ This function is usually called by \code{BestSlope} function and you seldom need
 \author{Kyun-Seop Bae <k@acr.kr>}
 \seealso{\code{\link{BestSlope}}}
 \examples{
-Slope(Indometh[Indometh$Subject==1, "time"],Indometh[Indometh$Subject==1, "conc"])
+Slope(Indometh[Indometh$Subject==1, "time"], Indometh[Indometh$Subject==1, "conc"])
 }
 \keyword{slope}

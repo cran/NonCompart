@@ -1,8 +1,9 @@
 \name{NEWS}
-\title{News for Package \pkg{NonCompart}}
-\section{Changes in version 0.2.7 (2017-03-15)}{
+\title{News for Package \pkg{ncar}}
+\section{Changes in version 0.3.0 (2017-04-06)}{
   \itemize{
-    \item{New functions for CDISC handling and comparisons between studies and dose groups}
+    \item{\pkg{NonCompart} Only essential functions for calculation were remained.}
   }
 }
+
 

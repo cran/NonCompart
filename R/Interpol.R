@@ -1,4 +1,4 @@
-Interpol = function(x, y, xnew, Slope, b0, fit="Linear")
+Interpol = function(x, y, xnew, Slope, b0, down="Linear")
 {
   n = length(x)
   if (n != length(y) | !is.numeric(x) | !is.numeric(y)) stop("Bad Input!")
@@ -18,7 +18,7 @@ Interpol = function(x, y, xnew, Slope, b0, fit="Linear")
   } else RIGHT = FALSE
 
   if (LEFT==TRUE & RIGHT==TRUE) {
-    if (fit=="Log" & y2 < y1 & y2 > 0) ynew = exp(log(y1) + (log(y2) - log(y1))/(x2 - x1)*(xnew - x1))
+    if (down=="Log" & y2 < y1 & y2 > 0) ynew = exp(log(y1) + (log(y2) - log(y1))/(x2 - x1)*(xnew - x1))
     else                                     ynew = y1 + (y2 - y1)/(x2 - x1)*(xnew - x1)
   }
 

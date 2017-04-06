@@ -23,9 +23,9 @@ This function returns AUC and AUMC by linear trapezoidal method.
 }
 }
 \author{Kyun-Seop Bae <k@acr.kr>}
-\seealso{\code{\link{LogAUC}},\code{\link{AUC}}}
+\seealso{\code{\link{LogAUC}}, \code{\link{AUC}}}
 \examples{
-LinAUC(Theoph[Theoph$Subject==1, "Time"],Theoph[Theoph$Subject==1, "conc"])
-AUC(Theoph[Theoph$Subject==1, "Time"],Theoph[Theoph$Subject==1, "conc"]) # compare the last line
+LinAUC(Theoph[Theoph$Subject==1, "Time"], Theoph[Theoph$Subject==1, "conc"])
+AUC(Theoph[Theoph$Subject==1, "Time"], Theoph[Theoph$Subject==1, "conc"]) # compare the last line
 }
 \keyword{AUC}
