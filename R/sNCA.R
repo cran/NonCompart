@@ -23,7 +23,7 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
     if (y[1] > y[2] & y[2] > 0) {
       C0 = exp(-x[1]*(log(y[2]) - log(y[1]))/(x[2] - x[1]) + log(y[1]))
     } else {
-      C0 = min(x[y > 0])
+      C0 = y[x==min(x[y > 0])]
     }
     x2 = c(0, x)
     y2 = c(C0, y)

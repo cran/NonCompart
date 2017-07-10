@@ -1,13 +1,14 @@
-tabNCA = function(concData, colSubj="Subject", colTime="Time", colConc="conc", dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUnit="h", concUnit="ug/L", down="Linear", MW=0, returnNA=FALSE) 
+tabNCA = function(concData, colSubj="Subject", colTime="Time", colConc="conc", dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUnit="h", concUnit="ug/L", down="Linear", MW=0, returnNA=FALSE)
 {
   IDs = unique(concData[,colSubj])
   nID = length(IDs)
-  
-  if (length(dose) == 1) Dose = rep(dose, nID)
+
+  if (length(dose) == 1) dose = rep(dose, nID)
+  else if (length(dose) != nID) stop("Length of dose is not compatible to number of subjects!")
 
   Res = vector()
   for (i in 1:nID) {
-    tRes = sNCA(concData[concData[,colSubj]==IDs[i],colTime], concData[concData[,colSubj]==IDs[i],colConc], dose=Dose[i], adm=adm, dur=dur, doseUnit=doseUnit, timeUnit=timeUnit, concUnit=concUnit, down=down, MW=MW, returnNA=returnNA)
+    tRes = sNCA(concData[concData[,colSubj]==IDs[i],colTime], concData[concData[,colSubj]==IDs[i],colConc], dose=dose[i], adm=adm, dur=dur, doseUnit=doseUnit, timeUnit=timeUnit, concUnit=concUnit, down=down, MW=MW, returnNA=returnNA)
     Res = rbind(Res, c(ID=IDs[i], tRes))
   }
   rownames(Res) = NULL
