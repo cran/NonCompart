@@ -1,5 +1,9 @@
 sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUnit="h", concUnit="ug/L", iAUC="", down="Linear", MW=0, returnNA=TRUE)
 {
+# Laat Modified: 2017.7.19 
+# Author: Kyun-Seop Bae k@acr.kr
+# Calls: BestSlope, IntAUC
+
   if (!(is.numeric(x) & is.numeric(y) & is.numeric(dose) & is.numeric(dur) & is.character(adm) & is.character(down))) stop("Check input types!")
 
   n = length(x)
@@ -11,6 +15,33 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
   NApoints = is.na(x) | is.na(y)
   x = x[!NApoints]             # remove NA points in x
   y = y[!NApoints]             # remove NA points in y
+
+  RetNames1 = c("b0", "CMAX", "CMAXD", "TMAX", "TLAG", "CLST", "CLSTP", "TLST", "LAMZHL", "LAMZ",
+             "LAMZLL", "LAMZUL", "LAMZNPT", "CORRXY", "R2", "R2ADJ", "C0", "AUCLST", "AUCALL",
+             "AUCIFO", "AUCIFOD", "AUCIFP", "AUCIFPD", "AUCPEO", "AUCPEP", "AUCPBEO", "AUCPBEP",
+             "AUMCLST", "AUMCIFO", "AUMCIFP", "AUMCPEO", "AUMCPEP",
+             "MRTIVLST", "MRTIVIFO", "MRTIVIFP", "MRTEVLST", "MRTEVIFO", "MRTEVIFP",
+             "VZO", "VZP", "VZFO", "VZFP", "CLO", "CLP", "CLFO", "CLFP", "VSSO", "VSSP")
+  Res = rep(NA_real_, length(RetNames1))
+  names(Res) = RetNames1
+
+  if (n != length(y) | length(y[y < 0]) > 0) {
+    Res["LAMZNPT"] = 0
+    return(Res)
+  }
+
+  uY = unique(y)
+  if (length(uY) == 1) { # Case of all the same values
+    Res["CMAX"] = uY
+    if (dose > 0) Res["CMAXD"] = uY / dose
+    Res["TMAX"] = x[y==uY][1] # First Tmax
+    if (length(which(y==uY)) > 1) Res["TLAG"] = x[which(y==uY) - 1]
+    Res["CLST"] = uY
+    Res["TLST"] = x[y==uY][1]
+    Res["LAMZNPT"] = 0
+    Res["b0"] = uY
+    return(Res)
+  }
 
   iLastNonZero = max(which(y > 0)) # Index of last non-zero y
   x0 = x[1:iLastNonZero] # Till Non-zero concentration. i.e. removing trailing zeros
@@ -43,23 +74,14 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
     }
   }
 
-  RetNames1 = c("b0", "CMAX", "CMAXD", "TMAX", "TLAG", "CLST", "CLSTP", "TLST", "LAMZHL", "LAMZ",
-             "LAMZLL", "LAMZUL", "LAMZNPT", "CORRXY", "R2", "R2ADJ", "C0", "AUCLST", "AUCALL",
-             "AUCIFO", "AUCIFOD", "AUCIFP", "AUCIFPD", "AUCPEO", "AUCPEP", "AUCPBEO", "AUCPBEP",
-             "AUMCLST", "AUMCIFO", "AUMCIFP", "AUMCPEO", "AUMCPEP",
-             "MRTIVLST", "MRTIVIFO", "MRTIVIFP", "MRTEVLST", "MRTEVIFO", "MRTEVIFP",
-             "VZO", "VZP", "VZFO", "VZFP", "CLO", "CLP", "CLFO", "CLFP", "VSSO", "VSSP")
-  Res = rep(NA, length(RetNames1))
-  names(Res) = RetNames1
-
   tRes = BestSlope(x1, y1, adm)
   if (length(tRes) != 9) tRes = c(NA, NA, 0, NA, NA, NA, NA, NA, NA)
   Res[c("R2", "R2ADJ", "LAMZNPT", "LAMZ", "b0", "CORRXY", "LAMZLL", "LAMZUL", "CLSTP")] = tRes
-  tabAUC = AUC(x3, y3, down=down)
+  tabAUC = AUC(x3, y3, down)
   Res[c("AUCLST","AUMCLST")] = tabAUC[length(x3),]
-  Res["AUCALL"] = AUC(x2, y2, down=down)[length(x2),1]
+  Res["AUCALL"] = AUC(x2, y2, down)[length(x2),1]
   Res["LAMZHL"] = log(2)/Res["LAMZ"]
-  Res["TMAX"] = x[which.max(y)]
+  Res["TMAX"] = x[which.max(y)][1]
   Res["CMAX"] = max(y)
   Res["TLST"] = x[iLastNonZero]
   Res["CLST"] = y[iLastNonZero]

@@ -1,25 +1,48 @@
 Slope = function(x, y)
 {
+# Author: Kyun-Seop Bae k@acr.kr
+# Called by: BestSlope
+# Calls: none except base
+# Last modification: 2017.7.20
+# INPUT
+#    x: time
+#    y: natural log of concentration
+# RETURN
+  Result = c(R2=NA,     # R square
+             R2ADJ=NA,  # R square adjusted
+             LAMZNPT=0, # Number of points for Lambda z
+             LAMZ=NA,   # Lambda z, terminal slope as a positive number
+             b0=NA,     # intercept from OLS, i.e. simple linear regression
+             CORRXY=NA, # Correlation of x, y
+             LAMZLL=NA, # Lower time for lambda z
+             LAMZUL=NA, # Upper time for lambda z
+             CLSTP=NA)  # Concentration last predicted in original scale
+#
   n = length(x)
-  if (n != length(y) | !is.numeric(x) | !is.numeric(y)) stop("Bad Input!")
+  if (n == 1 | n != length(y) | !is.numeric(x) | !is.numeric(y)) {
+    return(Result)  # return default
+  }
 
-  mx = mean(x)
-  my = mean(y)
+  mx  = mean(x)
+  my  = mean(y)
   Sxx = sum((x - mx)*(x - mx))
   Sxy = sum((x - mx)*(y - my))
   Syy = sum((y - my)*(y - my))
-  b1 = Sxy/Sxx
-  b0 = my - b1*mx
-  Rsq = b1 * Sxy / Syy
-  aRsq = 1 - (1 - Rsq)*(n - 1)/(n - 2)           # Rsq_adjusted, See wikipedia
-  Corr = sign(b1)*sqrt(Rsq)
-  LambdaLower = x[1]
-  LambdaUpper = x[n]
-  ClastPred = exp(b0 + b1 * x[n])
+  b1  = Sxy/Sxx
 
-  if (b1 < 0) Result = c(Rsq, aRsq, n, -b1, b0, Corr, LambdaLower, LambdaUpper, ClastPred)  # negative slope to positive slope
-  else        Result = c(NA, NA, 0, NA, NA, NA, NA, NA, NA)      # positive slope
+  if (is.nan(b1) | b1 > 0) {
+    return(Result)   # return default
+  }
 
-  names(Result) = c("R2", "R2ADJ", "LAMZNPT", "LAMZ", "b0", "CORRXY", "LAMZLL", "LAMZUL", "CLSTP")
+# Expectedly
+  Result["LAMZNPT"] = n
+  Result["LAMZ"]    = -b1
+  Result["b0"]      = my - b1*mx
+  Result["R2"]      = b1 * Sxy/Syy
+  Result["R2ADJ"]   = 1 - (1 - Result["R2"])*(n - 1)/(n - 2)
+  Result["CORRXY"]  = sign(b1)*sqrt(Result["R2"])
+  Result["LAMZLL"]  = x[1]
+  Result["LAMZUL"]  = x[n]
+  Result["CLSTP"]   = exp(Result["b0"] + b1 * x[n])
   return(Result)
 }
