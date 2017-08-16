@@ -1,15 +1,15 @@
-\name{tabNCA}
-\alias{tabNCA}
+\name{tblNCA}
+\alias{tblNCA}
 \title{Table output NCA}
-\description{This output NCA result to table form.}
+\description{Do multiple NCA and returns a result table.}
 \usage{
-tabNCA(concData, colSubj = "Subject", colTime = "Time", colConc = "conc", dose = 0, 
+tblNCA(concData, key = "Subject", colTime = "Time", colConc = "conc", dose = 0, 
        adm = "Extravascular", dur = 0, doseUnit = "mg", timeUnit = "h", 
-       concUnit = "ug/L", down = "Linear", MW = 0, returnNA = FALSE)
+       concUnit = "ug/L", down = "Linear", MW = 0)
 }
 \arguments{
   \item{concData}{concentration data table}
-  \item{colSubj}{column name for subject ID}
+  \item{key}{column names of concData to be shown at the output table}
   \item{colTime}{column name for time}
   \item{colConc}{column name for concentration}
   \item{dose}{administered dose}
@@ -20,7 +20,6 @@ tabNCA(concData, colSubj = "Subject", colTime = "Time", colConc = "conc", dose =
   \item{concUnit}{unit of concentration}
   \item{down}{method to calculate AUC, \code{"Linear"} or \code{"Log"}}
   \item{MW}{molecular weight of drug}
-  \item{returnNA}{if \code{returnNA} is \code{TRUE}, it returns NA values also.}
 }
 \value{Basically same with \code{\link{sNCA}}}
 \author{Kyun-Seop Bae <k@acr.kr>}
@@ -28,8 +27,8 @@ tabNCA(concData, colSubj = "Subject", colTime = "Time", colConc = "conc", dose =
 \code{\link{help}}, \code{\link{sNCA}}
 }
 \examples{
-tabNCA(Theoph, dose=320, concUnit="mg/L")
-tabNCA(Indometh, colSubj="Subject", colTime="time", colConc="conc", dose=25, 
+tblNCA(Theoph, key="Subject", dose=320, concUnit="mg/L")
+tblNCA(Indometh, key="Subject", colTime="time", colConc="conc", dose=25, 
        adm="Infusion", dur=0.5, concUnit="mg/L")
 }
 \keyword{Output Form}

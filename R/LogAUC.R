@@ -1,7 +1,18 @@
 LogAUC = function(x, y) # down="Log" means Linear-Up Log-Down
 {
+# Author: Kyun-Seop Bae k@acr.kr
+# Last modification: 2017.7.24
+# Called by: IntAUC
+# Calls: none except base
+# INPUT
+#    x: time or similar vector
+#    y: concentration or similar vector
+# RETURNS
+  Result = c(AUC = NA_real_,  # AUC by log down method
+             AUMC = NA_real_) # AUMC by log down method
+# Input check             
   n = length(x)
-  if (n != length(y) | !is.numeric(x) | !is.numeric(y)) stop("Bad Input!")
+  if (n != length(y) | !is.numeric(x) | !is.numeric(y)) return(Result)
 
   auc = 0
   aumc = 0
@@ -15,7 +26,7 @@ LogAUC = function(x, y) # down="Log" means Linear-Up Log-Down
       aumc = aumc + (x[i] - x[i-1])*(y[i]*x[i] + y[i-1]*x[i-1])/2
     }
   }
-  Result = c(auc, aumc)
-  names(Result) = c("AUC", "AUMC")
+  Result["AUC"]  = auc
+  Result["AUMC"] = aumc
   return(Result)
 }

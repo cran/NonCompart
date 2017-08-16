@@ -4,7 +4,7 @@
 \description{This is the work-horse function for NCA.}
 \usage{
 sNCA(x, y, dose = 0, adm = "Extravascular", dur = 0, doseUnit = "mg", timeUnit = "h", 
-     concUnit = "ug/L", iAUC = "", down = "Linear", MW = 0, returnNA = TRUE)
+     concUnit = "ug/L", iAUC = "", down = "Linear", MW = 0, returnNA = FALSE)
 }
 \arguments{
   \item{x}{usually time}
@@ -18,7 +18,7 @@ sNCA(x, y, dose = 0, adm = "Extravascular", dur = 0, doseUnit = "mg", timeUnit =
   \item{iAUC}{interval AUCs to calculate}
   \item{down}{either of \code{"Linear"} or \code{"Log"} to indicate the way to calculate AUC and AUMC}
   \item{MW}{molecular weight of the drug}
-  \item{returnNA}{if \code{returnNA} is \code{TRUE}, it returns NA values also.}
+  \item{returnNA}{deprecated, just for backward compatibility}
 }
 \details{
   This will replace \code{IndiNCA}.
@@ -70,7 +70,7 @@ sNCA(x, y, dose = 0, adm = "Extravascular", dur = 0, doseUnit = "mg", timeUnit =
   \item{CLFO}{CLO for extravascular administration, CLO/F, F is bioavailability}
   \item{CLFP}{CLP for extravascular administration, CLP/F, F is bioavailability}
   \item{VSSO}{volume of distribution at steady state using CLST, for intravascular administration only}
-  \item{VSSP}{volume of distribution at stead state using CLSTP, for intravascular administration only}
+  \item{VSSP}{volume of distribution at steady state using CLSTP, for intravascular administration only}
 }
 \references{
 Gabrielsson J, Weiner D. Pharmacokinetic and Pharmacodynamic Data Analysis - Concepts and Applications. 5th ed. 2016.
@@ -78,7 +78,7 @@ Gabrielsson J, Weiner D. Pharmacokinetic and Pharmacodynamic Data Analysis - Con
 \author{Kyun-Seop Bae <k@acr.kr>}
 
 \seealso{
-\code{\link{help}}, \code{\link{tabNCA}} 
+\code{\link{help}}, \code{\link{tblNCA}} 
 }
 \examples{
 # For one subject
@@ -86,7 +86,7 @@ x = Theoph[Theoph$Subject=="1","Time"]
 y = Theoph[Theoph$Subject=="1","conc"]
 
 sNCA(x, y, dose=320, doseUnit="mg", concUnit="mg/L", timeUnit="h")
-sNCA(x, y, dose=320, concUnit="mg/L", returnNA=FALSE)
+sNCA(x, y, dose=320, concUnit="mg/L")
 
 iAUC = data.frame(Name=c("AUC[0-12h]","AUC[0-24h]"), Start=c(0,0), End=c(12,24))
 sNCA(x, y, dose=320, doseUnit="mg", concUnit="mg/L", timeUnit="h", iAUC=iAUC)
@@ -98,26 +98,12 @@ sNCA(x, y/MW, dose=320, doseUnit="mg", concUnit="mmol/L", timeUnit="h", MW=MW)
 sNCA(x, y, dose=320/MW, doseUnit="mmol", concUnit="mg/L", timeUnit="h", MW=MW)
 sNCA(x, y/MW, dose=320/MW, doseUnit="mmol", concUnit="mmol/L", timeUnit="h", MW=MW)
 
-sNCA(x, y/MW, dose=320/MW, doseUnit="mmol", concUnit="mmol/L", timeUnit="h", MW=MW, 
-     returnNA=FALSE)
-sNCA(x, y/MW, doseUnit="mmol", concUnit="mmol/L", timeUnit="h", MW=MW, returnNA=FALSE)
+sNCA(x, y/MW, dose=320/MW, doseUnit="mmol", concUnit="mmol/L", timeUnit="h", MW=MW)
+sNCA(x, y/MW, doseUnit="mmol", concUnit="mmol/L", timeUnit="h", MW=MW)
 sNCA(x, y/MW, dose=as.numeric(NA), doseUnit="mmol", concUnit="mmol/L", timeUnit="h", 
-     MW=MW, returnNA=FALSE)
+     MW=MW)
 
 sNCA(x, y, dose=320, concUnit="mg/L", timeUnit="hr")
 sNCA(x*60, y, dose=320, concUnit="mg/L", timeUnit="min")
-
-# For all subjects
-IDs = sort(unique(Theoph[,"Subject"]))
-nID = length(IDs)
-Res = vector()
-for (i in 1:nID) {
-  x = Theoph[Theoph[,"Subject"]==IDs[i],"Time"]
-  y = Theoph[Theoph[,"Subject"]==IDs[i],"conc"]
-  tRes = sNCA(x, y, dose=320, concUnit="mg/L", returnNA=FALSE)
-  tRes = c(ID = IDs[i], tRes)
-  Res = rbind(Res, tRes)
-}
-Res
 }
 \keyword{Output Form}

@@ -1,17 +1,27 @@
-BestSlope = function(x, y, adm="Extravascular")
+BestSlope = function(x, y, adm="Extravascular", TOL=1e-4)
 {
-# Last Modified: 2017.7.19
 # Author: Kyun-Seop Bae k@acr.kr
-# Calls : Slope
+# Last modification: 2017.7.19
 # Called by : sNCA
-
-  RetNames = c("R2", "R2ADJ", "LAMZNPT", "LAMZ", "b0", "CORRXY", "LAMZLL", "LAMZUL", "CLSTP")
-  Result = rep(NA_real_, length(RetNames))
-  names(Result) = RetNames
-
+# Calls : Slope, UT
+# INPUT
+#    x: time or similar vector
+#    y: concentration or similar vector
+#    adm: method of drug administration "Bolus", "Infusion", or "Extravascular"
+#    TOL: Tolerance, see Phoneix WinNonlin 6.4 User's Guide p33
+# RETURNS
+  Result = c(R2 = NA,     # R square
+             R2ADJ = NA,  # R square adjusted
+             LAMZNPT = 0, # Number of points for Lambda z
+             LAMZ = NA,   # Lambda z, terminal slope as a positive number
+             b0 = NA,     # intercept from OLS, i.e. simple linear regression
+             CORRXY = NA, # Correlation of x, y
+             LAMZLL = NA, # Lower time for lambda z
+             LAMZUL = NA, # Upper time for lambda z
+             CLSTP = NA)  # Concentration last predicted in original scale
+# Input Check
   n = length(x)
   if (n != length(y) | !is.numeric(x) | !is.numeric(y) | length(y[y < 0]) > 0) {
-    #    warning("Check Input!")
     Result["LAMZNPT"] = 0
     return(Result)
   }
@@ -22,28 +32,28 @@ BestSlope = function(x, y, adm="Extravascular")
     return(Result)
   }
 
-  if (toupper(adm) == "BOLUS") {
+  if (UT(adm) == "BOLUS") {
     locStart = which.max(y)      # From Tmax (for Bolus)
   } else {
     locStart = which.max(y) + 1  # From next to Tmax (for the others)
   }
   locLast = max(which(y > 0))    # Till non-zero concentration
 
-  if (locLast - locStart < 2) {  # Too few to fit, R2ADJ becomes NaN.
+  if (locLast - locStart < 2) {  # Too few to fit, if this is 2, R2ADJ becomes NaN.
     Result["LAMZNPT"] = 0
     return(Result)
   }
 
-  tmpMat = matrix(nrow=(locLast - locStart - 1), ncol=length(RetNames)) # Slope function returns 9 columns
-  colnames(tmpMat) = RetNames
+  tmpMat = matrix(nrow=(locLast - locStart - 1), ncol=length(Result))
+  colnames(tmpMat) = names(Result)
   for (i in locStart:(locLast - 2)) {
     tmpMat[i - locStart + 1,] = Slope(x[i:locLast], log(y[i:locLast]))
   }
-  tmpMat = tmpMat[tmpMat[,"LAMZNPT"] > 2,]
+  tmpMat = tmpMat[tmpMat[,"LAMZNPT"] > 2,,drop=FALSE]
   if (nrow(tmpMat) > 0) {
-    maxAdjRsq = max(tmpMat[,"R2ADJ"]) # The second column is "Rsq_adjusted" which is the criterion
-    OKs = ifelse(abs(maxAdjRsq - tmpMat[,"R2ADJ"]) < 1e-4, TRUE, FALSE) # Tolerance is 1e-4, Phoneix WinNonlin 6.4 User's Guide p33
-    nMax = max(tmpMat[OKs,"LAMZNPT"])   # Third column is "No_points_lambda_z" or "n"
+    maxAdjRsq = max(tmpMat[,"R2ADJ"])
+    OKs = ifelse(abs(maxAdjRsq - tmpMat[,"R2ADJ"]) < TOL, TRUE, FALSE)
+    nMax = max(tmpMat[OKs,"LAMZNPT"])
     Result = tmpMat[OKs & tmpMat[,"LAMZNPT"]==nMax,]
   } else {
     Result["LAMZNPT"] = 0

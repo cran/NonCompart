@@ -30,33 +30,33 @@ Theoph[,"Subject"] = as.numeric(as.character(Theoph[,"Subject"]))
 Indometh[,"Subject"] = as.numeric(as.character(Indometh[,"Subject"]))
 
 Wres = read.csv("Final_Parameters_Pivoted_Theoph_Linear.csv")
-Rres = tabNCA(Theoph, "Subject", "Time", "conc", dose=320, concUnit="mg/L")
+Rres = tblNCA(Theoph, "Subject", "Time", "conc", dose=320, concUnit="mg/L")
 if (!Equal(Wres, Rres)) stop("Test Failed!")
 
 Wres = read.csv("Final_Parameters_Pivoted_Theoph_Log.csv")
-Rres = tabNCA(Theoph, "Subject", "Time", "conc", dose=320, down="Log", concUnit="mg/L")
+Rres = tblNCA(Theoph, "Subject", "Time", "conc", dose=320, down="Log", concUnit="mg/L")
 if (!Equal(Wres, Rres)) stop("Test Failed!")
 
 Wres = read.csv("Final_Parameters_Pivoted_Indometh_Linear.csv")
-Rres = tabNCA(Indometh, "Subject", "time", "conc", dose=25, adm="Bolus", concUnit="mg/L")
+Rres = tblNCA(Indometh, "Subject", "time", "conc", dose=25, adm="Bolus", concUnit="mg/L")
 if (!Equal(Wres, Rres)) stop("Test Failed!")
 
 Wres = read.csv("Final_Parameters_Pivoted_Indometh_Log.csv")
-Rres = tabNCA(Indometh, "Subject", "time", "conc", dose=25, adm="Bolus", down="Log", concUnit="mg/L")
+Rres = tblNCA(Indometh, "Subject", "time", "conc", dose=25, adm="Bolus", down="Log", concUnit="mg/L")
 if (!Equal(Wres, Rres)) stop("Test Failed!")
 
 Wres = read.csv("Final_Parameters_Pivoted_Indometh_Linear_Infusion.csv")
-Rres = tabNCA(Indometh, "Subject", "time", "conc", dose=25, adm="Infusion", dur=0.25, concUnit="mg/L")
+Rres = tblNCA(Indometh, "Subject", "time", "conc", dose=25, adm="Infusion", dur=0.25, concUnit="mg/L")
 if (!Equal(Wres, Rres)) stop("Test Failed!")
 
 Wres = read.csv("Final_Parameters_Pivoted_Indometh_Log_Infusion.csv")
-Rres = tabNCA(Indometh, "Subject", "time", "conc", dose=25, adm="Infusion", dur=0.25, down="Log", concUnit="mg/L")
+Rres = tblNCA(Indometh, "Subject", "time", "conc", dose=25, adm="Infusion", dur=0.25, down="Log", concUnit="mg/L")
 if (!Equal(Wres, Rres)) stop("Test Failed!")
 
 Wres = read.csv("Final_Parameters_Pivoted_Indometh_Linear_Wrong_Extravascular.csv")
-Rres = tabNCA(Indometh, "Subject", "time", "conc", dose=25, concUnit="mg/L")
+Rres = tblNCA(Indometh, "Subject", "time", "conc", dose=25, concUnit="mg/L")
 if (!Equal(Wres, Rres)) stop("Test Failed!")
 
 Wres = read.csv("Final_Parameters_Pivoted_Indometh_Log_Wrong_Extravascular.csv")
-Rres = tabNCA(Indometh, "Subject", "time", "conc", dose=25, down="Log", concUnit="mg/L")
+Rres = tblNCA(Indometh, "Subject", "time", "conc", dose=25, down="Log", concUnit="mg/L")
 if (!Equal(Wres, Rres)) stop("Test Failed!")

@@ -1,9 +1,33 @@
-Interpol = function(x, y, xnew, Slope, b0, down="Linear")
+Interpol = function(x, y, xnew, Slope=0, b0=0, down="Linear")
 {
-  n = length(x)
-  if (n != length(y) | !is.numeric(x) | !is.numeric(y)) stop("Bad Input!")
+# Author: Kyun-Seop Bae k@acr.kr
+# Last modification: 2017.7.24
+# Called by: IntAUC
+# Calls: UT
+# INPUT
+#   x: time or similar vector
+#   y: concentration or similear vector
+#   xnew: new x point to be interpolated
+#   Slope: terminal slope of log(y) ~ x
+#   b0: intercept of log(y) ~ x
+#   down: "Linear" or "Log"
+# RETURNS
+  Result = list(x, y) # Default return value
 
-  if (xnew %in% x) return(list(x, y))
+# Input check
+  n = length(x)
+  if (n != length(y)) {
+    warning("Interpol: Length of x and y are different!")
+    newN = min(n, length(y))
+    x = x[1:newN]
+    y = y[1:newN]
+  }
+
+  if (!is.numeric(x) | !is.numeric(y) | !is.character(down)) {
+    return(Result)
+  }
+
+  if (xnew %in% x) return(Result)
 
   if (sum(x < xnew) > 0) {
     LEFT = TRUE
@@ -18,13 +42,17 @@ Interpol = function(x, y, xnew, Slope, b0, down="Linear")
   } else RIGHT = FALSE
 
   if (LEFT==TRUE & RIGHT==TRUE) {
-    if (down=="Log" & y2 < y1 & y2 > 0) ynew = exp(log(y1) + (log(y2) - log(y1))/(x2 - x1)*(xnew - x1))
-    else                                     ynew = y1 + (y2 - y1)/(x2 - x1)*(xnew - x1)
+    if (UT(down)=="LOG" & y2 < y1 & y2 > 0) {
+      ynew = exp(log(y1) + (log(y2) - log(y1))/(x2 - x1)*(xnew - x1))
+    } else {
+      ynew = y1 + (y2 - y1)/(x2 - x1)*(xnew - x1)
+    }
   }
 
   if (LEFT==TRUE & RIGHT==FALSE) ynew = exp(b0 - Slope*xnew)  # NOT ynew = exp(log(y1) - Slope*(xnew - x1))
   if (LEFT==FALSE & RIGHT==TRUE) ynew = y2/x2 * xnew
-  if (LEFT==FALSE & RIGHT==FALSE) stop("Bad Input!")
+  if (LEFT==FALSE & RIGHT==FALSE) return(Result)
 
-  return(list(sort(c(x,xnew)), c(y,ynew)[order(c(x,xnew))]))
+  Result = list(sort(c(x, xnew)), c(y, ynew)[order(c(x, xnew))])
+  return(Result)
 }

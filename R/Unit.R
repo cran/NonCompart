@@ -1,9 +1,23 @@
 Unit = function(code="", timeUnit="h", concUnit="ng/mL", doseUnit="mg", MW=0)
 {
-  if (length(strsplit(doseUnit, "/")[[1]]) != 1) stop("Dose unit should not be based on body weight or BSA!")
-  if (!is.numeric(MW)) stop("Molecular weight should be positive number!")
-  if (MW < 0) stop("Molecular weight should be positive number!")
-  
+# Author: Kyun-Seop Bae k@acr.kr
+# Last modification: 2017.7.25
+# Called by:
+# Calls:
+# INPUT
+#    code: SDTM PPTESTCD
+#    timeUnit: time unit
+#    concUnit: concentration unit
+#    doseUnit: dose unit, this should not be amount per kg (BWT) or per m2 (BSA)
+#    MW: molecular weight
+# RETURNS
+  Result = c(Unit = NA_character_, # unit of SDTM PPTESTCD like AUCLST, CMAX, CMAXD, ...
+             Factor = NA_real_) # conversion factor used internally 
+# Input check
+  if (length(strsplit(doseUnit, "/")[[1]]) != 1) return(Result)
+  if (!is.numeric(MW)) return(Result)
+  if (MW < 0) return(Result)
+#
   rGram = c(1, 1e3, 1e6, 1e9, 1e12)
   names(rGram) = c("g", "mg", "ug", "ng", "pg")
 
@@ -26,11 +40,11 @@ Unit = function(code="", timeUnit="h", concUnit="ng/mL", doseUnit="mg", MW=0)
   tConc = strsplit(concUnit, "/")[[1]]
   uAmt = tConc[1]
   uVol = tConc[2]
-  
+
   if ((uAmt %in% names(rMol) & doseUnit %in% names(rGram)) | (uAmt %in% names(rGram) & doseUnit %in% names(rMol))) {
     if (is.na(MW)) warning("Molecular weight should be given for more informative results!")
     if (MW <= 0) warning("Molecular weight should be given for more informative results!")
-  } 
+  }
 
   TestCD = c("b0", "CMAX", "CMAXD", "TMAX", "TLAG", "CLST", "CLSTP", "TLST", "LAMZHL", "LAMZ",
              "LAMZLL", "LAMZUL", "LAMZNPT", "CORRXY", "R2", "R2ADJ", "C0", "AUCLST", "AUCALL",
@@ -74,8 +88,9 @@ Unit = function(code="", timeUnit="h", concUnit="ng/mL", doseUnit="mg", MW=0)
 
   Res[,2] = as.numeric(Res[,2])
   Res[Res[,2] == 0 | Res[,2] == Inf, 2] = NA
-  
-  if (code == "") return(Res)
-  else return(Res[code,])
 
+  if (code == "") Result = Res # return all codes
+  else return(Result = Res[code,]) # return only specific codes
+  
+  return(Result)
 }

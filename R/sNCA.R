@@ -1,31 +1,49 @@
-sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUnit="h", concUnit="ug/L", iAUC="", down="Linear", MW=0, returnNA=TRUE)
+sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUnit="h", concUnit="ug/L", iAUC="", down="Linear", MW=0, returnNA=FALSE)
 {
-# Laat Modified: 2017.7.19 
 # Author: Kyun-Seop Bae k@acr.kr
-# Calls: BestSlope, IntAUC
+# Last modification: 2017.8.14
+# Called by: tblNCA
+# Calls: BestSlope, IntAUC, Unit, UT
+# INPUT
+#   x: time or similar vector
+#   y: concentration or similar vector
+#   dose: dose, actually given dose, not per kg or per square meter dose!
+#   adm: administration method, "Extravascular", "Bolus", or "Infusion"
+#   dur: duration of infusion
+#   doseUnit: dose unit (not per kg or per m2)
+#   timeUnit: time unit
+#   concUnit: concentration unit
+#   iAUC: data frame for interval AUC. See the example for the detail
+#   down: trapezoidal downward caculation. "Linear" or "Log"
+#   MW: molecular weight
+#   returnNA: deprecated one, just for backward compatibility
+# RETURNS
+#   NCA result
 
   if (!(is.numeric(x) & is.numeric(y) & is.numeric(dose) & is.numeric(dur) & is.character(adm) & is.character(down))) stop("Check input types!")
-
-  n = length(x)
-  if (n != length(y)) stop("Length of y is different from the length of x!")
-
-  adm = toupper(adm)
-  if (adm == "INFUSION" & !(dur > 0)) stop("Infusion mode should have dur larger than 0!")
+  if (UT(adm) == "INFUSION" & !(dur > 0)) stop("Infusion mode should have dur larger than 0!")
 
   NApoints = is.na(x) | is.na(y)
   x = x[!NApoints]             # remove NA points in x
   y = y[!NApoints]             # remove NA points in y
+  n = length(x)
 
   RetNames1 = c("b0", "CMAX", "CMAXD", "TMAX", "TLAG", "CLST", "CLSTP", "TLST", "LAMZHL", "LAMZ",
-             "LAMZLL", "LAMZUL", "LAMZNPT", "CORRXY", "R2", "R2ADJ", "C0", "AUCLST", "AUCALL",
-             "AUCIFO", "AUCIFOD", "AUCIFP", "AUCIFPD", "AUCPEO", "AUCPEP", "AUCPBEO", "AUCPBEP",
-             "AUMCLST", "AUMCIFO", "AUMCIFP", "AUMCPEO", "AUMCPEP",
-             "MRTIVLST", "MRTIVIFO", "MRTIVIFP", "MRTEVLST", "MRTEVIFO", "MRTEVIFP",
-             "VZO", "VZP", "VZFO", "VZFP", "CLO", "CLP", "CLFO", "CLFP", "VSSO", "VSSP")
+             "LAMZLL", "LAMZUL", "LAMZNPT", "CORRXY", "R2", "R2ADJ", "AUCLST", "AUCALL",
+             "AUCIFO", "AUCIFOD", "AUCIFP", "AUCIFPD", "AUCPEO", "AUCPEP",
+             "AUMCLST", "AUMCIFO", "AUMCIFP", "AUMCPEO", "AUMCPEP")
+  if (UT(adm) == "BOLUS") {
+    RetNames1 = union(RetNames1, c("C0", "AUCPBEO", "AUCPBEP"))
+  }
+  if (UT(adm) == "EXTRAVASCULAR") {
+    RetNames1 = union(RetNames1, c("VZFO", "VZFP", "CLFO", "CLFP", "MRTEVLST", "MRTEVIFO", "MRTEVIFP"))
+  } else {
+    RetNames1 = union(RetNames1, c("VZO", "VZP", "CLO", "CLP", "MRTIVLST", "MRTIVIFO", "MRTIVIFP", "VSSO", "VSSP"))
+  }
   Res = rep(NA_real_, length(RetNames1))
   names(Res) = RetNames1
 
-  if (n != length(y) | length(y[y < 0]) > 0) {
+  if (n == 0 | n != length(y) | length(y[y < 0]) > 0) {
     Res["LAMZNPT"] = 0
     return(Res)
   }
@@ -35,7 +53,11 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
     Res["CMAX"] = uY
     if (dose > 0) Res["CMAXD"] = uY / dose
     Res["TMAX"] = x[y==uY][1] # First Tmax
-    if (length(which(y==uY)) > 1) Res["TLAG"] = x[which(y==uY) - 1]
+    if (which(y==uY)[1] > 1) {
+      Res["TLAG"] = x[which(y==uY) - 1]
+    } else {
+      Res["TLAG"] = 0
+    }
     Res["CLST"] = uY
     Res["TLST"] = x[y==uY][1]
     Res["LAMZNPT"] = 0
@@ -50,7 +72,7 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
   x1 = x0[y0 != 0]             # remove all points with zeros in y (including mid) for LAMZ
   y1 = y0[y0 != 0]             # remove all points with zeros in y
 
-  if (adm == "BOLUS") {
+  if (UT(adm) == "BOLUS") {
     if (y[1] > y[2] & y[2] > 0) {
       C0 = exp(-x[1]*(log(y[2]) - log(y[1]))/(x[2] - x[1]) + log(y[1]))
     } else {
@@ -100,7 +122,7 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
     Res["AUCIFPD"] = Res["AUCIFP"]/dose
   }
 
-  if (adm == "BOLUS") {
+  if (UT(adm) == "BOLUS") {
     Res["C0"] = C0                      # Phoneix WinNonlin 6.4 User's Guide p27
     Res["AUCPBEO"] = tabAUC[2,1]/Res["AUCIFO"]*100
     Res["AUCPBEP"] = tabAUC[2,1]/Res["AUCIFP"]*100
@@ -112,7 +134,7 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
     }
   }
 
-  if (adm == "EXTRAVASCULAR") {
+  if (UT(adm) == "EXTRAVASCULAR") {
     Res["VZFO"] = dose/Res["AUCIFO"]/Res["LAMZ"]
     Res["VZFP"] = dose/Res["AUCIFP"]/Res["LAMZ"]
     Res["CLFO"] = dose/Res["AUCIFO"]
@@ -149,12 +171,6 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
   }
 
   attr(Res, "units") = c(Units[RetNames1,1], rep(Units["AUCLST",1], niAUC))
-  if (returnNA == FALSE) {
-    strAttr = attr(Res, "units")
-    iNotNAs = !is.na(Res)
-    Res = Res[iNotNAs]
-    attr(Res, "units") = strAttr[iNotNAs]
-  }
   return(Res)
 }
 

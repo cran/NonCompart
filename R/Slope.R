@@ -1,28 +1,28 @@
 Slope = function(x, y)
 {
 # Author: Kyun-Seop Bae k@acr.kr
+# Last modification: 2017.7.20
 # Called by: BestSlope
 # Calls: none except base
-# Last modification: 2017.7.20
 # INPUT
 #    x: time
 #    y: natural log of concentration
-# RETURN
-  Result = c(R2=NA,     # R square
-             R2ADJ=NA,  # R square adjusted
-             LAMZNPT=0, # Number of points for Lambda z
-             LAMZ=NA,   # Lambda z, terminal slope as a positive number
-             b0=NA,     # intercept from OLS, i.e. simple linear regression
-             CORRXY=NA, # Correlation of x, y
-             LAMZLL=NA, # Lower time for lambda z
-             LAMZUL=NA, # Upper time for lambda z
-             CLSTP=NA)  # Concentration last predicted in original scale
-#
+# RETURNS
+  Result = c(R2 = NA_real_,     # R square
+             R2ADJ = NA_real_,  # R square adjusted
+             LAMZNPT = 0,       # Number of points for Lambda z
+             LAMZ = NA_real_,   # Lambda z, terminal slope as a positive number
+             b0 = NA_real_,     # intercept from OLS, i.e. simple linear regression
+             CORRXY = NA_real_, # Correlation of x, y
+             LAMZLL = NA_real_, # Lower time for lambda z
+             LAMZUL = NA_real_, # Upper time for lambda z
+             CLSTP = NA_real_)  # Concentration last predicted in original scale
+# Input Check
   n = length(x)
   if (n == 1 | n != length(y) | !is.numeric(x) | !is.numeric(y)) {
     return(Result)  # return default
   }
-
+#
   mx  = mean(x)
   my  = mean(y)
   Sxx = sum((x - mx)*(x - mx))
