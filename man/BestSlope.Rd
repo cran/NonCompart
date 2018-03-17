@@ -36,4 +36,4 @@ BestSlope(Theoph[Theoph$Subject==1, "Time"], Theoph[Theoph$Subject==1, "conc"])
 BestSlope(Indometh[Indometh$Subject==1, "time"], Indometh[Indometh$Subject==1, "conc"],
           adm="Bolus")
 }
-\keyword{Slope}
+\keyword{slope}

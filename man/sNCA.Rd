@@ -4,7 +4,7 @@
 \description{This is the work-horse function for NCA.}
 \usage{
 sNCA(x, y, dose = 0, adm = "Extravascular", dur = 0, doseUnit = "mg", timeUnit = "h", 
-     concUnit = "ug/L", iAUC = "", down = "Linear", MW = 0, returnNA = FALSE)
+     concUnit = "ug/L", iAUC = "", down = "Linear", R2ADJ = 0.7, MW = 0, returnNA = FALSE)
 }
 \arguments{
   \item{x}{usually time}
@@ -17,6 +17,7 @@ sNCA(x, y, dose = 0, adm = "Extravascular", dur = 0, doseUnit = "mg", timeUnit =
   \item{concUnit}{unit of concentration}
   \item{iAUC}{interval AUCs to calculate}
   \item{down}{either of \code{"Linear"} or \code{"Log"} to indicate the way to calculate AUC and AUMC}
+  \item{R2ADJ}{Lowest threshold of adjusted R-square value to do manual slope determination}
   \item{MW}{molecular weight of the drug}
   \item{returnNA}{deprecated, just for backward compatibility}
 }

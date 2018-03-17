@@ -5,7 +5,7 @@
 \usage{
 tblNCA(concData, key = "Subject", colTime = "Time", colConc = "conc", dose = 0, 
        adm = "Extravascular", dur = 0, doseUnit = "mg", timeUnit = "h", 
-       concUnit = "ug/L", down = "Linear", MW = 0)
+       concUnit = "ug/L", down = "Linear", R2ADJ = 0.7, MW = 0)
 }
 \arguments{
   \item{concData}{concentration data table}
@@ -19,6 +19,7 @@ tblNCA(concData, key = "Subject", colTime = "Time", colConc = "conc", dose = 0,
   \item{timeUnit}{unit of time}
   \item{concUnit}{unit of concentration}
   \item{down}{method to calculate AUC, \code{"Linear"} or \code{"Log"}}
+  \item{R2ADJ}{Lowest threshold of adjusted R-square value to do manual slope determination}
   \item{MW}{molecular weight of drug}
 }
 \value{Basically same with \code{\link{sNCA}}}

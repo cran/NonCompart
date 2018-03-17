@@ -24,8 +24,6 @@ sNCA     to perform NCA for one subject.
 \item Gibaldi M, Perrier D. Pharmacokinetics. 2nd ed. revised and expanded. 1982.
 }
 }
-\keyword{ package }
-\keyword{ NCA }
 \examples{
 # Theoph and Indometh data: dose in mg, conc in mg/L, time in h
 tblNCA(Theoph, key="Subject", colTime="Time", colConc="conc", dose=320,
