@@ -5,11 +5,11 @@
 \usage{
 tblNCA(concData, key = "Subject", colTime = "Time", colConc = "conc", dose = 0, 
        adm = "Extravascular", dur = 0, doseUnit = "mg", timeUnit = "h", 
-       concUnit = "ug/L", down = "Linear", R2ADJ = 0.7, MW = 0)
+       concUnit = "ug/L", down = "Linear", R2ADJ = 0.9, MW = 0)
 }
 \arguments{
   \item{concData}{concentration data table}
-  \item{key}{column names of concData to be shown at the output table}
+  \item{key}{column names of concData to be shown in the output table}
   \item{colTime}{column name for time}
   \item{colConc}{column name for concentration}
   \item{dose}{administered dose}

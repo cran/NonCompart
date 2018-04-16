@@ -1,6 +1,6 @@
 tblNCA = function(concData, key="Subject", colTime="Time", colConc="conc", dose=0, 
          adm="Extravascular", dur=0, doseUnit="mg", timeUnit="h", concUnit="ug/L", 
-         down="Linear", R2ADJ=0.7, MW=0)
+         down="Linear", R2ADJ=0.9, MW=0)
 {
 # Author: Kyun-Seop Bae k@acr.kr
 # Last modification: 2017.8.4

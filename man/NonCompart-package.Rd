@@ -30,7 +30,7 @@ tblNCA(Theoph, key="Subject", colTime="Time", colConc="conc", dose=320,
        adm="Extravascular", doseUnit="mg", concUnit="mg/L")
 
 tblNCA(Indometh, key="Subject", colTime="time", colConc="conc", dose=25, 
-       adm="Infusion", dur=0.5, doseUnit="mg", concUnit="mg/L")
+       adm="Infusion", dur=0.5, doseUnit="mg", concUnit="mg/L", R2ADJ=0.9)
 
 # For individual NCA
 iAUC = data.frame(Name=c("AUC[0-12h]","AUC[0-24h]"), Start=c(0,0), End=c(12,24)) ; iAUC
