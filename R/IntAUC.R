@@ -27,13 +27,13 @@ IntAUC = function(x, y, t1, t2, Res, down="Linear")
   x = newSeries[[1]]
   y = newSeries[[2]]
 
-  if (UT(down)=="LINEAR") {
+  if (toupper(trimws(down))=="LINEAR") {
     if (t2 <= tL) {
       Result = LinAUC(x[x>=t1 & x<=t2], y[x>=t1 & x<=t2])[[1]]
     } else {
       Result = LinAUC(x[x>=t1 & x<=tL], y[x>=t1 & x<=tL])[[1]] + LogAUC(x[x>=tL & x<=t2], y[x>=tL & x<=t2])[[1]]
     }
-  } else if (UT(down)=="LOG") {
+  } else if (toupper(trimws(down))=="LOG") {
     Result = LogAUC(x[x>=t1 & x<=t2], y[x>=t1 & x<=t2])[[1]]
   } else {
     Result = NA_real_

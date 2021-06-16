@@ -3,7 +3,7 @@ tblNCA = function(concData, key="Subject", colTime="Time", colConc="conc", dose=
          down="Linear", R2ADJ=0.9, MW=0, iAUC="")
 {
 # Author: Kyun-Seop Bae k@acr.kr
-# Last modification: 2018.7.10
+# Last modification: 2021.6.10
 # Called by:
 # Calls: sNCA
 # INPUT

@@ -1,7 +1,7 @@
 BestSlope = function(x, y, adm="Extravascular", TOL=1e-4)
 {
 # Author: Kyun-Seop Bae k@acr.kr
-# Last modification: 2017.7.19
+# Last modification: 2020.5.7
 # Called by : sNCA
 # Calls : Slope, UT
 # INPUT
@@ -32,7 +32,7 @@ BestSlope = function(x, y, adm="Extravascular", TOL=1e-4)
     return(Result)
   }
 
-  if (UT(adm) == "BOLUS") {
+  if (toupper(trimws(adm)) == "BOLUS") {
     locStart = which.max(y)      # From Tmax (for Bolus)
   } else {
     locStart = which.max(y) + 1  # From next to Tmax (for the others)

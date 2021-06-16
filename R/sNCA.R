@@ -1,7 +1,7 @@
-sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUnit="h", concUnit="ug/L", iAUC="", down="Linear", R2ADJ=0.9, MW=0, returnNA=FALSE)
+sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUnit="h", concUnit="ug/L", iAUC="", down="Linear", R2ADJ=0.5, MW=0)
 {
 # Author: Kyun-Seop Bae k@acr.kr
-# Last modification: 2017.8.14
+# Last modification: 2021.6.10
 # Called by: tblNCA
 # Calls: BestSlope, IntAUC, Unit, UT
 # INPUT
@@ -16,12 +16,11 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
 #   iAUC: data frame for interval AUC. See the example for the detail
 #   down: trapezoidal downward caculation. "Linear" or "Log"
 #   MW: molecular weight
-#   returnNA: deprecated one, just for backward compatibility
 # RETURNS
 #   NCA result
 
   if (!(is.numeric(x) & is.numeric(y) & is.numeric(dose) & is.numeric(dur) & is.character(adm) & is.character(down))) stop("Check input types!")
-  if (UT(adm) == "INFUSION" & !(dur > 0)) stop("Infusion mode should have dur larger than 0!")
+  if (toupper(trimws(adm)) == "INFUSION" & !(dur > 0)) stop("Infusion mode should have dur larger than 0!")
 
   NApoints = is.na(x) | is.na(y)
   x = x[!NApoints]             # remove NA points in x
@@ -32,10 +31,10 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
              "LAMZLL", "LAMZUL", "LAMZNPT", "CORRXY", "R2", "R2ADJ", "AUCLST", "AUCALL",
              "AUCIFO", "AUCIFOD", "AUCIFP", "AUCIFPD", "AUCPEO", "AUCPEP",
              "AUMCLST", "AUMCIFO", "AUMCIFP", "AUMCPEO", "AUMCPEP")
-  if (UT(adm) == "BOLUS") {
+  if (toupper(trimws(adm)) == "BOLUS") {
     RetNames1 = union(RetNames1, c("C0", "AUCPBEO", "AUCPBEP"))
   }
-  if (UT(adm) == "EXTRAVASCULAR") {
+  if (toupper(trimws(adm)) == "EXTRAVASCULAR") {
     RetNames1 = union(RetNames1, c("VZFO", "VZFP", "CLFO", "CLFP", "MRTEVLST", "MRTEVIFO", "MRTEVIFP"))
   } else {
     RetNames1 = union(RetNames1, c("VZO", "VZP", "CLO", "CLP", "MRTIVLST", "MRTIVIFO", "MRTIVIFP", "VSSO", "VSSP"))
@@ -47,6 +46,9 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
     Res["LAMZNPT"] = 0
     return(Res)
   }
+
+  Units = Unit(doseUnit=doseUnit, timeUnit=timeUnit, concUnit=concUnit, MW=MW)
+  for (i in 1:length(Res)) Res[i] = Res[i] * Units[names(Res[i]),2]
 
   uY = unique(y)
   if (length(uY) == 1) { # Case of all the same values
@@ -62,6 +64,21 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
     Res["TLST"] = x[y==uY][1]
     Res["LAMZNPT"] = 0
     Res["b0"] = uY
+
+    if (is.data.frame(iAUC)) { # eg iAUC = data.frame(Name=c("AUC[0-12h]","AUC[0-24h]"), Start=c(0,0), End=c(12,24))
+      niAUC = nrow(iAUC)
+      if (niAUC > 0) {
+         RetNames = union(RetNames1, as.character(iAUC[,"Name"]))
+         for (i in 1:niAUC) {
+          if (adm == "BOLUS") Res[as.character(iAUC[i,"Name"])] = IntAUC(x2, y2, iAUC[i,"Start"], iAUC[i,"End"], Res, down=down)
+          else Res[as.character(iAUC[i,"Name"])] = IntAUC(x, y, iAUC[i,"Start"], iAUC[i,"End"], Res, down=down)
+        }
+      }
+    } else {
+      niAUC = 0
+    }
+    attr(Res, "units") = c(Units[RetNames1,1], rep(Units["AUCLST",1], niAUC))
+
     return(Res)
   }
 
@@ -72,7 +89,7 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
   x1 = x0[y0 != 0]       # remove all points with zeros in y (including mid) for LAMZ
   y1 = y0[y0 != 0]       # remove all points with zeros in y
 
-  if (UT(adm) == "BOLUS") {
+  if (toupper(trimws(adm)) == "BOLUS") {
     if (y[1] > y[2] & y[2] > 0) {
       C0 = exp(-x[1]*(log(y[2]) - log(y[1]))/(x[2] - x[1]) + log(y[1]))
     } else {
@@ -104,7 +121,7 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
       tRes = DetSlope(x1, y1, sel.1=which(x1 == tRes["LAMZLL"]), sel.2=which(x1 == tRes["LAMZUL"]))
     }
   }
-  
+
   attr(tRes, "UsedPoints") = attr(tRes, "UsedPoints") + which(x==tRes["LAMZLL"]) - which(x1==tRes["LAMZLL"]) ###
   Res[c("R2", "R2ADJ", "LAMZNPT", "LAMZ", "b0", "CORRXY", "LAMZLL", "LAMZUL", "CLSTP")] = tRes
   tabAUC = AUC(x3, y3, down)
@@ -130,7 +147,7 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
     Res["AUCIFPD"] = Res["AUCIFP"]/dose
   }
 
-  if (UT(adm) == "BOLUS") {
+  if (toupper(trimws(adm)) == "BOLUS") {
     Res["C0"] = C0                      # Phoneix WinNonlin 6.4 User's Guide p27
     Res["AUCPBEO"] = tabAUC[2,1]/Res["AUCIFO"]*100
     Res["AUCPBEP"] = tabAUC[2,1]/Res["AUCIFP"]*100
@@ -142,7 +159,7 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
     }
   }
 
-  if (UT(adm) == "EXTRAVASCULAR") {
+  if (toupper(trimws(adm)) == "EXTRAVASCULAR") {
     Res["VZFO"] = dose/Res["AUCIFO"]/Res["LAMZ"]
     Res["VZFP"] = dose/Res["AUCIFP"]/Res["LAMZ"]
     Res["CLFO"] = dose/Res["AUCIFO"]
@@ -162,8 +179,8 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
     Res["VSSP"] = Res["MRTIVIFP"]*Res["CLP"]
   }
 
-  Units = Unit(doseUnit=doseUnit, timeUnit=timeUnit, concUnit=concUnit, MW=MW)
-  for (i in 1:length(Res)) Res[i] = Res[i] * Units[names(Res[i]),2]
+#  Units = Unit(doseUnit=doseUnit, timeUnit=timeUnit, concUnit=concUnit, MW=MW)
+#  for (i in 1:length(Res)) Res[i] = Res[i] * Units[names(Res[i]),2]
 
   if (is.data.frame(iAUC)) { # eg iAUC = data.frame(Name=c("AUC[0-12h]","AUC[0-24h]"), Start=c(0,0), End=c(12,24))
     niAUC = nrow(iAUC)

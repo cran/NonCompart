@@ -1,5 +1,11 @@
 \name{NEWS}
 \title{News for Package \pkg{NonCompart}}
+\section{Changes in version 0.4.8 (2021-06-10)}{
+  \itemize{
+    \item{UT function removed}
+    \item{returnNA option in sNCA function is removed.}
+  }
+}
 \section{Changes in version 0.4.7 (2020-01-02)}{
   \itemize{
     \item{When impossible to determining slope, it skipe.}

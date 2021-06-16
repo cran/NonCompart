@@ -4,7 +4,7 @@
 \description{This is the work-horse function for NCA.}
 \usage{
 sNCA(x, y, dose = 0, adm = "Extravascular", dur = 0, doseUnit = "mg", timeUnit = "h", 
-     concUnit = "ug/L", iAUC = "", down = "Linear", R2ADJ = 0.9, MW = 0, returnNA = FALSE)
+     concUnit = "ug/L", iAUC = "", down = "Linear", R2ADJ = 0.5, MW = 0)
 }
 \arguments{
   \item{x}{usually time}
@@ -19,7 +19,6 @@ sNCA(x, y, dose = 0, adm = "Extravascular", dur = 0, doseUnit = "mg", timeUnit =
   \item{down}{either of \code{"Linear"} or \code{"Log"} to indicate the way to calculate AUC and AUMC}
   \item{R2ADJ}{Minimum adjusted R-square value to determine terminal slope automatically}
   \item{MW}{molecular weight of the drug}
-  \item{returnNA}{deprecated, just for backward compatibility}
 }
 \details{
   This will replace \code{IndiNCA}.
