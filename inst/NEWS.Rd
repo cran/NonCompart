@@ -1,5 +1,11 @@
 \name{NEWS}
 \title{News for Package \pkg{NonCompart}}
+\section{Changes in version 0.4.9 (2021-07-15)}{
+  \itemize{
+    \item{Bug when a slope is determined by manual selection is fixed.}
+    \item{\code{excludeDelta} option added to tblNCA, sNCA, and BestSlope functions.}
+  }
+}
 \section{Changes in version 0.4.8 (2021-06-10)}{
   \itemize{
     \item{UT function removed}
