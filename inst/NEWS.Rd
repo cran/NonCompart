@@ -1,6 +1,12 @@
 \name{NEWS}
 \title{News for Package \pkg{NonCompart}}
-\section{Changes in version 0.4.9 (2021-07-15)}{
+\section{Changes in version 0.5.0 (2022-01-20)}{
+  \itemize{
+    \item{\code{DetSlope} no longer opens a new device when closed.}
+    \item{Data type error with tibble data is fixed.}
+  }
+}
+\section{Changes in version 0.4.9 (2021-07-10)}{
   \itemize{
     \item{Bug when a slope is determined by manual selection is fixed.}
     \item{\code{excludeDelta} option added to tblNCA, sNCA, and BestSlope functions.}

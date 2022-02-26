@@ -147,7 +147,7 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
   }
 
   if (toupper(trimws(adm)) == "BOLUS") {
-    Res["C0"] = C0                      # Phoneix WinNonlin 6.4 User's Guide p27
+    Res["C0"] = C0                      # Phoenix WinNonlin 6.4 User's Guide p27
     Res["AUCPBEO"] = tabAUC[2,1]/Res["AUCIFO"]*100
     Res["AUCPBEP"] = tabAUC[2,1]/Res["AUCIFP"]*100
   } else {

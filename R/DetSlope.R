@@ -14,6 +14,7 @@ DetSlope = function(x, y, SubTitle="", sel.1=0, sel.2=0)
   a = 0                # intercept of regression line
   b = 0                # slope of regression line
   OldOpt = options("locatorBell")
+  on.exit(options(OldOpt))
   options(locatorBell = FALSE) # locator bell is annoying
   
   SavedDev = dev.cur()
@@ -66,6 +67,6 @@ DetSlope = function(x, y, SubTitle="", sel.1=0, sel.2=0)
   Res = Slope(x[sel], y[sel])
   Res["CLSTP"] = exp(Res["b0"] - Res["LAMZ"]*max(x[is.finite(y)]))
   attr(Res, "UsedPoints") = which(sel)
-  dev.set(SavedDev)
+  if (attr(SavedDev, "names") != "null device") dev.set(SavedDev)
   return(Res)
 }

@@ -2,6 +2,7 @@ tblNCA = function(concData, key="Subject", colTime="Time", colConc="conc", dose=
          adm="Extravascular", dur=0, doseUnit="mg", timeUnit="h", concUnit="ug/L",
          down="Linear", R2ADJ=0, MW=0, iAUC="", excludeDelta=1)
 {
+  class(concData) = "data.frame"
   nKey = length(key)
   for (i in 1:nKey) {
     if (sum(is.na(concData[,key[i]])) > 0) stop(paste(key[i], "has NA value, which is not allowed!"))
