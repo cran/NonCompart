@@ -1,5 +1,10 @@
 \name{NEWS}
 \title{News for Package \pkg{NonCompart}}
+\section{Changes in version 0.5.1 (2022-06-15)}{
+  \itemize{
+    \item{Rare cases raising NaN in \code{BestSlope} are handled.}
+  }
+}
 \section{Changes in version 0.5.0 (2022-01-20)}{
   \itemize{
     \item{\code{DetSlope} no longer opens a new device when closed.}

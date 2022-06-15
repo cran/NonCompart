@@ -44,7 +44,7 @@ BestSlope = function(x, y, adm="Extravascular", TOL=1e-4, excludeDelta=1)
     for (i in locStart:(locLast - 2)) {
       tmpMat[i - locStart + 1, 1:8] = Slope(x[i:locLast], log(y[i:locLast]))
     }
-    tmpMat = tmpMat[tmpMat[,"LAMZNPT"] > 2, , drop=FALSE]
+    tmpMat = tmpMat[is.finite(tmpMat[,"R2ADJ"]) & tmpMat[,"LAMZNPT"] > 2, , drop=FALSE]
 
     if (nrow(tmpMat) > 0) {
       maxAdjRsq = max(tmpMat[,"R2ADJ"])
