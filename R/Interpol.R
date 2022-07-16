@@ -3,7 +3,6 @@ Interpol = function(x, y, xnew, Slope=0, b0=0, down="Linear")
 # Author: Kyun-Seop Bae k@acr.kr
 # Last modification: 2017.7.24
 # Called by: IntAUC
-# Calls: UT
 # INPUT
 #   x: time or similar vector
 #   y: concentration or similear vector

@@ -1,6 +1,6 @@
 Package: NonCompart
-Version: 0.5.1
-Date: 2022-06-15
+Version: 0.6.0
+Date: 2022-07-15
 Title: Noncompartmental Analysis for Pharmacokinetic Data
 Description: Conduct a noncompartmental analysis with industrial strength.
              Some features are
@@ -17,5 +17,5 @@ NeedsCompilation: no
 LazyLoad: yes
 Repository: CRAN
 URL: https://cran.r-project.org/package=NonCompart
-Packaged: 2022-06-15 03:32:51 UTC; Kyun-SeopBae
-Date/Publication: 2022-06-15 06:40:02 UTC
+Packaged: 2022-07-14 23:48:44 UTC; Kyun-SeopBae
+Date/Publication: 2022-07-16 07:30:42 UTC
