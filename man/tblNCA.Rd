@@ -5,8 +5,8 @@
 \usage{
 tblNCA(concData, key = "Subject", colTime = "Time", colConc = "conc", dose = 0, 
        adm = "Extravascular", dur = 0, doseUnit = "mg", timeUnit = "h", 
-       concUnit = "ug/L", down = "Linear", R2ADJ = 0, MW = 0, iAUC="", 
-       excludeDelta = 1)
+       concUnit = "ug/L", down = "Linear", R2ADJ = 0, MW = 0, SS = FALSE, 
+       iAUC = "", excludeDelta = 1)
 }
 \arguments{
   \item{concData}{concentration data table}
@@ -22,6 +22,7 @@ tblNCA(concData, key = "Subject", colTime = "Time", colConc = "conc", dose = 0,
   \item{down}{method to calculate AUC, \code{"Linear"} or \code{"Log"}}
   \item{R2ADJ}{Lowest threshold of adjusted R-square value to do manual slope determination}
   \item{MW}{molecular weight of drug}
+  \item{SS}{if steady-state, this should be TRUE. AUCLST (AUClast) is used instead of AUCIFO (AUCinf) for the calculation of Vz (VZFO, VZO), CL (CLFO, CLO), and Vdss (VSSO).}
   \item{iAUC}{data.frame for interval AUC}
   \item{excludeDelta}{Improvement of R2ADJ larger than this value could exclude the last point. Default value 1 is for the compatibility with other software.}
 }

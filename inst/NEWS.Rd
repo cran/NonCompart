@@ -1,5 +1,15 @@
 \name{NEWS}
 \title{News for Package \pkg{NonCompart}}
+\section{Changes in version 0.6.0 (2022-07-15)}{
+  \itemize{
+    \item{SS option for steady-state added in sNCA and tblNCA}
+  }
+}
+\section{Changes in version 0.6.0 (2022-07-15)}{
+  \itemize{
+    \item{tblAUC, gAUC, gInterpol functions are added for general purpose AUC such as AUC for pharmacodynamic(PD) data.}
+  }
+}
 \section{Changes in version 0.5.1 (2022-06-15)}{
   \itemize{
     \item{Rare cases raising NaN in \code{BestSlope} are handled.}

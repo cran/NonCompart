@@ -1,4 +1,4 @@
-4ed8976d9aa1d1e2db4614f7c49e9ef1 *DESCRIPTION
+fba89660887c5e26bea1bdd8e2e269f7 *DESCRIPTION
 aad8950cd2df3664a26e10a1424dc339 *NAMESPACE
 8cb310c3ee5c016602cc604b5eaf5f30 *R/AUC.R
 84c8b1a32c2ba6530189489bdfc0ee52 *R/BestSlope.R
@@ -13,12 +13,12 @@ dc3af2c5deb0e1ebc08d90e98dafa09f *R/Interpol.R
 f6c89cd0a3332cfc2dc87caafc23d618 *R/gAUC.R
 fc2b71dd44bcd9ea1947b15f4bb28b5e *R/gIntAUC.R
 d5986fa7abc97891ff659a1f79c97342 *R/gInterpol.R
-fe839ed26c50f0f69f22837975d3e801 *R/sNCA.R
+e6659fb16e3f5775aeb3c498303a8ba2 *R/sNCA.R
 44bdaf4f2fd4fa1bc464098aee219546 *R/tblAUC.R
-3b1a8ea1a59cb084c61e356851664647 *R/tblNCA.R
-4221d941d26c1e4a715f38fcd805dfb0 *inst/NEWS.Rd
+a25ec81464cd679df1b7f21c596a299d *R/tblNCA.R
+b1db225a38d3357b808359f9af5a1571 *inst/NEWS.Rd
 04d250f59fbe31125b9fa4e10bd46f4d *inst/doc/NCA-formula.pdf
-9a071f61bb773ca1d059f05d17291b13 *inst/doc/NonCompart-manual.pdf
+253400f3488d48a1823d8190142970be *inst/doc/NonCompart-manual.pdf
 6ac81423c742520910cd9804b3a9377f *man/AUC.Rd
 89a9782e19a7780247cf38c27dfc88f9 *man/BestSlope.Rd
 3c37e12e51baec908c009d095b234109 *man/DetSlope.Rd
@@ -33,9 +33,9 @@ d5cf0983d8c4394ce3bee4277793c086 *man/UnitUrine.Rd
 d99fa671fd09e8b0bc69e532cf7b44e9 *man/gAUC.Rd
 bc9cf3b7bd8ce907159e1837c638348b *man/gIntAUC.Rd
 db834df75a0555799abb0aba400d067f *man/gInterpol.Rd
-17d42117ba48f8a80fb0ba88224dee9a *man/sNCA.Rd
+c6517deb0f528ad76f32579993716f2a *man/sNCA.Rd
 95618b14592b97bbd96b8fecae6d6bfa *man/tblAUC.Rd
-fab151d4a590378c757f1e1a787c2fb4 *man/tblNCA.Rd
+6639e4047afcf851bd931204ab3ff79b *man/tblNCA.Rd
 a827db7f0ee6478ccd434cdf13760ba8 *tests/Final_Parameters_Pivoted_Indometh_Linear.csv
 eb14c5321c2973dca87161e7b5096c09 *tests/Final_Parameters_Pivoted_Indometh_Linear_Infusion.csv
 9b904b4ab275a2b96e5bc04d7bfba662 *tests/Final_Parameters_Pivoted_Indometh_Linear_NoDose.csv

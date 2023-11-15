@@ -1,4 +1,4 @@
-sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUnit="h", concUnit="ug/L", iAUC="", down="Linear", R2ADJ=0.7, MW=0, Keystring="", excludeDelta=1)
+sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUnit="h", concUnit="ug/L", iAUC="", down="Linear", R2ADJ=0.7, MW=0, SS=FALSE, Keystring="", excludeDelta=1)
 {
   if (!(is.numeric(x) & is.numeric(y) & is.numeric(dose) & is.numeric(dur) & is.character(adm) & is.character(down))) stop("Check input types!")
   if (toupper(trimws(adm)) == "INFUSION" & !(dur > 0)) stop("Infusion mode should have dur larger than 0!")
@@ -8,7 +8,6 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
   if (any(x[order(x)] != x)) stop("Check if the x is sorted in order!")
   y = y[!NApoints]             # remove NA points in y
   n = length(x)
-  
 
   RetNames1 = c("b0", "CMAX", "CMAXD", "TMAX", "TLAG", "CLST", "CLSTP", "TLST", "LAMZHL", "LAMZ",
              "LAMZLL", "LAMZUL", "LAMZNPT", "CORRXY", "R2", "R2ADJ", "AUCLST", "AUCALL",
@@ -159,23 +158,45 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
   }
 
   if (toupper(trimws(adm)) == "EXTRAVASCULAR") {
-    Res["VZFO"] = dose/Res["AUCIFO"]/Res["LAMZ"]
-    Res["VZFP"] = dose/Res["AUCIFP"]/Res["LAMZ"]
-    Res["CLFO"] = dose/Res["AUCIFO"]
-    Res["CLFP"] = dose/Res["AUCIFP"]
-    Res["MRTEVLST"] = Res["AUMCLST"]/Res["AUCLST"]
-    Res["MRTEVIFO"] = Res["AUMCIFO"]/Res["AUCIFO"]
-    Res["MRTEVIFP"] = Res["AUMCIFP"]/Res["AUCIFP"]
+    if (SS) {
+      Res["VZFO"] = dose/Res["AUCLST"]/Res["LAMZ"]
+      Res["VZFP"] = NA
+      Res["CLFO"] = dose/Res["AUCLST"]
+      Res["CLFP"] = NA
+      Res["MRTEVLST"] = Res["AUMCLST"]/Res["AUCLST"]
+      Res["MRTEVIFO"] = NA
+      Res["MRTEVIFP"] = NA
+    } else {
+      Res["VZFO"] = dose/Res["AUCIFO"]/Res["LAMZ"]
+      Res["VZFP"] = dose/Res["AUCIFP"]/Res["LAMZ"]
+      Res["CLFO"] = dose/Res["AUCIFO"]
+      Res["CLFP"] = dose/Res["AUCIFP"]
+      Res["MRTEVLST"] = Res["AUMCLST"]/Res["AUCLST"]
+      Res["MRTEVIFO"] = Res["AUMCIFO"]/Res["AUCIFO"]
+      Res["MRTEVIFP"] = Res["AUMCIFP"]/Res["AUCIFP"]
+    }
   } else {
-    Res["VZO"] = dose/Res["AUCIFO"]/Res["LAMZ"]
-    Res["VZP"] = dose/Res["AUCIFP"]/Res["LAMZ"]
-    Res["CLO"] = dose/Res["AUCIFO"]
-    Res["CLP"] = dose/Res["AUCIFP"]
-    Res["MRTIVLST"] = Res["AUMCLST"]/Res["AUCLST"] - dur/2
-    Res["MRTIVIFO"] = Res["AUMCIFO"]/Res["AUCIFO"] - dur/2
-    Res["MRTIVIFP"] = Res["AUMCIFP"]/Res["AUCIFP"] - dur/2
-    Res["VSSO"] = Res["MRTIVIFO"]*Res["CLO"]
-    Res["VSSP"] = Res["MRTIVIFP"]*Res["CLP"]
+    if (SS) {
+      Res["VZO"] = dose/Res["AUCLST"]/Res["LAMZ"]
+      Res["VZP"] = NA
+      Res["CLO"] = dose/Res["AUCLST"]
+      Res["CLP"] = NA
+      Res["MRTIVLST"] = Res["AUMCLST"]/Res["AUCLST"] - dur/2
+      Res["MRTIVIFO"] = NA
+      Res["MRTIVIFP"] = NA
+      Res["VSSO"] = Res["MRTIVLST"]*Res["CLO"]
+      Res["VSSP"] = NA
+    } else {
+      Res["VZO"] = dose/Res["AUCIFO"]/Res["LAMZ"]
+      Res["VZP"] = dose/Res["AUCIFP"]/Res["LAMZ"]
+      Res["CLO"] = dose/Res["AUCIFO"]
+      Res["CLP"] = dose/Res["AUCIFP"]
+      Res["MRTIVLST"] = Res["AUMCLST"]/Res["AUCLST"] - dur/2
+      Res["MRTIVIFO"] = Res["AUMCIFO"]/Res["AUCIFO"] - dur/2
+      Res["MRTIVIFP"] = Res["AUMCIFP"]/Res["AUCIFP"] - dur/2
+      Res["VSSO"] = Res["MRTIVIFO"]*Res["CLO"]
+      Res["VSSP"] = Res["MRTIVIFP"]*Res["CLP"]
+    }
   }
 
   if (is.data.frame(iAUC)) { # eg iAUC = data.frame(Name=c("AUC[0-12h]","AUC[0-24h]"), Start=c(0,0), End=c(12,24))
