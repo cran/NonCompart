@@ -14,7 +14,7 @@
 \details{
 This function interpolate y value, if xnew is not in x vector.
 If xnew is in x vector, it just returns the given x and y vector.
-This function usually is called by \code{IntAUC} function
+This function usually is called by \code{IntAUC} function.
 Returned vector is sorted in the order of increasing x values.
 }
 \value{new x and y vector containing xnew and ynew point}

@@ -1,6 +1,6 @@
 Package: NonCompart
-Version: 0.7.0
-Date: 2023-11-15
+Version: 0.7.1
+Date: 2026-03-09
 Title: Noncompartmental Analysis for Pharmacokinetic Data
 Description: Conduct a noncompartmental analysis with industrial strength.
              Some features are
@@ -9,13 +9,17 @@ Description: Conduct a noncompartmental analysis with industrial strength.
              3) Supporting both 'linear-up linear-down' and 'linear-up log-down' method
              4) Interval(partial) AUCs with 'linear' or 'log' interpolation method
              * Reference: Gabrielsson J, Weiner D. Pharmacokinetic and Pharmacodynamic Data Analysis - Concepts and Applications. 5th ed. 2016. (ISBN:9198299107).
-Author: Kyun-Seop Bae [aut]
+Author: Kyun-Seop Bae [aut, cre]
 Maintainer: Kyun-Seop Bae <k@acr.kr>
+Authors@R: person(given = "Kyun-Seop",
+                  family = "Bae",
+                  role = c("aut", "cre"),
+                  email = "k@acr.kr")
 Copyright: 2016-, Kyun-Seop Bae
 License: GPL-3
 NeedsCompilation: no
 LazyLoad: yes
 Repository: CRAN
 URL: https://cran.r-project.org/package=NonCompart
-Packaged: 2023-11-15 02:44:47 UTC; Kyun-SeopBae
-Date/Publication: 2023-11-15 05:50:02 UTC
+Packaged: 2026-03-09 00:42:33 UTC; Kyun-SeopBae
+Date/Publication: 2026-03-09 06:40:16 UTC

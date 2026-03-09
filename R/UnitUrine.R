@@ -3,7 +3,7 @@ UnitUrine = function(conU="ng/mL", volU="mL", amtU="mg", MW=0)
 # Author: Kyun-Seop Bae k@acr.kr
 # Last modification: 2017.8.14
 # Called by:
-# Calls:
+# Calls: .normalizeConcUnit
 # INPUT
 #    conU: concentration unit
 #    volU: volume unit
@@ -28,15 +28,7 @@ UnitUrine = function(conU="ng/mL", volU="mL", amtU="mg", MW=0)
 
   amtU = tolower(amtU)
 
-  if (toupper(conU) == toupper("mg/mL")) conU = "g/L"
-  if (toupper(conU) == toupper("ug/mL")) conU = "mg/L"
-  if (toupper(conU) == toupper("ng/mL")) conU = "ug/L"
-  if (toupper(conU) == toupper("pg/mL")) conU = "ng/L"
-
-  if (toupper(conU) == toupper("mmol/mL")) conU = "mol/L"
-  if (toupper(conU) == toupper("umul/mL")) conU = "mmol/L"
-  if (toupper(conU) == toupper("nmol/mL")) conU = "umol/L"
-  if (toupper(conU) == toupper("pmol/mL")) conU = "nmol/L"
+  conU = .normalizeConcUnit(conU)
 
   amtU1 = strsplit(conU, "/")[[1]][1]
 

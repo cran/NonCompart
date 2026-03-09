@@ -12,7 +12,7 @@ Unit = function(code="", timeUnit="h", concUnit="ng/mL", doseUnit="mg", MW=0)
 #    MW: molecular weight
 # RETURNS
   Result = c(Unit = NA_character_, # unit of SDTM PPTESTCD like AUCLST, CMAX, CMAXD, ...
-             Factor = NA_real_) # conversion factor used internally 
+             Factor = NA_real_) # conversion factor used internally
 # Input check
   if (length(strsplit(doseUnit, "/")[[1]]) != 1) return(Result)
   if (!is.numeric(MW)) return(Result)
@@ -27,15 +27,7 @@ Unit = function(code="", timeUnit="h", concUnit="ng/mL", doseUnit="mg", MW=0)
   doseUnit = tolower(doseUnit)
   timeUnit = tolower(timeUnit)
 
-  if (toupper(concUnit) == toupper("mg/mL")) concUnit = "g/L"
-  if (toupper(concUnit) == toupper("ug/mL")) concUnit = "mg/L"
-  if (toupper(concUnit) == toupper("ng/mL")) concUnit = "ug/L"
-  if (toupper(concUnit) == toupper("pg/mL")) concUnit = "ng/L"
-
-  if (toupper(concUnit) == toupper("mmol/mL")) concUnit = "mol/L"
-  if (toupper(concUnit) == toupper("umul/mL")) concUnit = "mmol/L"
-  if (toupper(concUnit) == toupper("nmol/mL")) concUnit = "umol/L"
-  if (toupper(concUnit) == toupper("pmol/mL")) concUnit = "nmol/L"
+  concUnit = .normalizeConcUnit(concUnit)
 
   tConc = strsplit(concUnit, "/")[[1]]
   uAmt = tConc[1]
@@ -73,16 +65,11 @@ Unit = function(code="", timeUnit="h", concUnit="ng/mL", doseUnit="mg", MW=0)
     if (Code %in% c("AUMCLST", "AUMCIFO", "AUMCIFP")) Res[i, 1] = paste0(timeUnit,"2*",concUnit)
 
     if (Code %in% c("VZO", "VZP", "VZFO", "VZFP", "VSSO", "VSSP")) {
-      if (uAmt %in% names(rMol) & doseUnit %in% names(rGram)) Res[i, ] = c(uVol, rMol[uAmt]/rGram[doseUnit] / MW)
-      else if (uAmt %in% names(rGram) & doseUnit %in% names(rMol)) Res[i, ] = c(uVol, rGram[uAmt]/rMol[doseUnit] * MW)
-      else if (uAmt %in% names(rGram) & doseUnit %in% names(rGram)) Res[i, ] = Res[i, ] = c(uVol, rGram[uAmt]/rGram[doseUnit])
-      else Res[i, ] = c(uVol, rMol[uAmt]/rMol[doseUnit])
+      Res[i, ] = .convertVolUnit(uAmt, doseUnit, uVol, rGram, rMol, MW)
     }
     if (Code %in% c("CLO", "CLP", "CLFO", "CLFP")) {
-      if (uAmt %in% names(rMol) & doseUnit %in% names(rGram)) Res[i, ] = c(paste0(uVol,"/",timeUnit), rMol[uAmt]/rGram[doseUnit] / MW)
-      else if (uAmt %in% names(rGram) & doseUnit %in% names(rMol)) Res[i, ] = c(paste0(uVol,"/",timeUnit), rGram[uAmt]/rMol[doseUnit] * MW)
-      else if (uAmt %in% names(rGram) & doseUnit %in% names(rGram)) Res[i, ] = Res[i, ] = c(paste0(uVol,"/",timeUnit), rGram[uAmt]/rGram[doseUnit])
-      else Res[i, ] = c(paste0(uVol,"/",timeUnit), rMol[uAmt]/rMol[doseUnit])
+      vu = .convertVolUnit(uAmt, doseUnit, uVol, rGram, rMol, MW)
+      Res[i, ] = c(paste0(vu[1],"/",timeUnit), vu[2])
     }
   }
 
@@ -91,6 +78,40 @@ Unit = function(code="", timeUnit="h", concUnit="ng/mL", doseUnit="mg", MW=0)
 
   if (code == "") Result = Res # return all codes
   else return(Result = Res[code,]) # return only specific codes
-  
+
   return(Result)
+}
+
+# Normalize concentration units: convert /mL to /L
+.normalizeConcUnit = function(concUnit)
+{
+  concUpper = toupper(concUnit)
+  conversions = list(
+    c("MG/ML", "g/L"),
+    c("UG/ML", "mg/L"),
+    c("NG/ML", "ug/L"),
+    c("PG/ML", "ng/L"),
+    c("MMOL/ML", "mol/L"),
+    c("UMOL/ML", "mmol/L"),
+    c("NMOL/ML", "umol/L"),
+    c("PMOL/ML", "nmol/L")
+  )
+  for (conv in conversions) {
+    if (concUpper == conv[1]) return(conv[2])
+  }
+  return(concUnit)
+}
+
+# Compute volume unit and conversion factor for VZ/CL parameters
+.convertVolUnit = function(uAmt, doseUnit, uVol, rGram, rMol, MW)
+{
+  if (uAmt %in% names(rMol) & doseUnit %in% names(rGram)) {
+    return(c(uVol, rMol[uAmt]/rGram[doseUnit] / MW))
+  } else if (uAmt %in% names(rGram) & doseUnit %in% names(rMol)) {
+    return(c(uVol, rGram[uAmt]/rMol[doseUnit] * MW))
+  } else if (uAmt %in% names(rGram) & doseUnit %in% names(rGram)) {
+    return(c(uVol, rGram[uAmt]/rGram[doseUnit]))
+  } else {
+    return(c(uVol, rMol[uAmt]/rMol[doseUnit]))
+  }
 }

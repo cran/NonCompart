@@ -1,22 +1,27 @@
 sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUnit="h", concUnit="ug/L", iAUC="", down="Linear", R2ADJ=0.7, MW=0, SS=FALSE, Keystring="", excludeDelta=1)
 {
   if (!(is.numeric(x) & is.numeric(y) & is.numeric(dose) & is.numeric(dur) & is.character(adm) & is.character(down))) stop("Check input types!")
-  if (toupper(trimws(adm)) == "INFUSION" & !(dur > 0)) stop("Infusion mode should have dur larger than 0!")
+
+  admUpper = toupper(trimws(adm))
+  if (admUpper == "INFUSION" & !(dur > 0)) stop("Infusion mode should have dur larger than 0!")
 
   NApoints = is.na(x) | is.na(y)
   x = x[!NApoints]             # remove NA points in x
-  if (any(x[order(x)] != x)) stop("Check if the x is sorted in order!")
+  if (is.unsorted(x)) stop("Check if the x is sorted in order!")
   y = y[!NApoints]             # remove NA points in y
   n = length(x)
+
+  isExtravascular = (admUpper == "EXTRAVASCULAR")
+  isBolus = (admUpper == "BOLUS")
 
   RetNames1 = c("b0", "CMAX", "CMAXD", "TMAX", "TLAG", "CLST", "CLSTP", "TLST", "LAMZHL", "LAMZ",
              "LAMZLL", "LAMZUL", "LAMZNPT", "CORRXY", "R2", "R2ADJ", "AUCLST", "AUCALL",
              "AUCIFO", "AUCIFOD", "AUCIFP", "AUCIFPD", "AUCPEO", "AUCPEP",
              "AUMCLST", "AUMCIFO", "AUMCIFP", "AUMCPEO", "AUMCPEP")
-  if (toupper(trimws(adm)) == "BOLUS") {
+  if (isBolus) {
     RetNames1 = union(RetNames1, c("C0", "AUCPBEO", "AUCPBEP"))
   }
-  if (toupper(trimws(adm)) == "EXTRAVASCULAR") {
+  if (isExtravascular) {
     RetNames1 = union(RetNames1, c("VZFO", "VZFP", "CLFO", "CLFP", "MRTEVLST", "MRTEVIFO", "MRTEVIFP"))
   } else {
     RetNames1 = union(RetNames1, c("VZO", "VZP", "CLO", "CLP", "MRTIVLST", "MRTIVIFO", "MRTIVIFP", "VSSO", "VSSP"))
@@ -56,7 +61,7 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
         for (i in 1:niAUC) {
           if (all(y == 0) & min(x, na.rm=T) <= min(0, iAUC[i,"Start"]) & max(x, na.rm=T) >= iAUC[i,"End"]) {
             Res[as.character(iAUC[i,"Name"])] = 0
-          } else if (toupper(trimws(adm)) == "BOLUS") {
+          } else if (isBolus) {
             if (sum(x == 0) == 0) {
               x2 = c(0, x)
               y2 = c(uY, y)
@@ -87,7 +92,7 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
   x1 = x0[y0 != 0]       # remove all points with zeros in y (including mid) for LAMZ
   y1 = y0[y0 != 0]       # remove all points with zeros in y
 
-  if (toupper(trimws(adm)) == "BOLUS") {
+  if (isBolus) {
     if (y[1] > y[2] & y[2] > 0) {
       C0 = exp(-x[1]*(log(y[2]) - log(y[1]))/(x[2] - x[1]) + log(y[1]))
     } else {
@@ -145,7 +150,7 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
     Res["AUCIFPD"] = Res["AUCIFP"]/dose
   }
 
-  if (toupper(trimws(adm)) == "BOLUS") {
+  if (isBolus) {
     Res["C0"] = C0                      # Phoenix WinNonlin 6.4 User's Guide p27
     Res["AUCPBEO"] = tabAUC[2,1]/Res["AUCIFO"]*100
     Res["AUCPBEP"] = tabAUC[2,1]/Res["AUCIFP"]*100
@@ -157,7 +162,7 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
     }
   }
 
-  if (toupper(trimws(adm)) == "EXTRAVASCULAR") {
+  if (isExtravascular) {
     if (SS) {
       Res["VZFO"] = dose/Res["AUCLST"]/Res["LAMZ"]
       Res["VZFP"] = NA
@@ -204,7 +209,7 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
     if (niAUC > 0) {
        RetNames1 = union(RetNames1, as.character(iAUC[,"Name"]))
        for (i in 1:niAUC) {
-        if (adm == "BOLUS") Res[as.character(iAUC[i,"Name"])] = IntAUC(x2, y2, iAUC[i,"Start"], iAUC[i,"End"], Res, down=down)
+        if (isBolus) Res[as.character(iAUC[i,"Name"])] = IntAUC(x2, y2, iAUC[i,"Start"], iAUC[i,"End"], Res, down=down)
         else Res[as.character(iAUC[i,"Name"])] = IntAUC(x, y, iAUC[i,"Start"], iAUC[i,"End"], Res, down=down)
         tRowNames = rownames(Units)
         Units = rbind(Units, Units["AUCLST",])
@@ -220,4 +225,3 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
   attr(Res, "UsedPoints") = attr(tRes, "UsedPoints")
   return(Res)
 }
-

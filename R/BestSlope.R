@@ -10,7 +10,7 @@ BestSlope = function(x, y, adm="Extravascular", TOL=1e-4, excludeDelta=1)
              LAMZUL = NA, # Upper time for lambda z
              CLSTP = NA)  # Clast predicted
 # Input Check
-  if (excludeDelta < 0) stop("Option excludeDelta should be non-negative!") 
+  if (excludeDelta < 0) stop("Option excludeDelta should be non-negative!")
   n = length(x)
   if (n == 0 | n != length(y) | !is.numeric(x) | !is.numeric(y) | length(y[y < 0]) > 0) {
     Result["LAMZNPT"] = 0
@@ -23,72 +23,13 @@ BestSlope = function(x, y, adm="Extravascular", TOL=1e-4, excludeDelta=1)
     return(Result)
   }
 
-  r0 = Result
-  if (toupper(trimws(adm)) == "BOLUS") {
-    locStart = which.max(y)      # From Tmax (for Bolus)
-  } else {
-    locStart = which.max(y) + 1  # From next to Tmax (for the others)
-  }
-  locLast = max(which(y > 0))    # Till non-zero concentration
-
-  if (is.na(locStart) | is.na(locLast)) {
-    Result["LAMZNPT"] = 0
-    return(Result)
-  }
-
-  if (locLast - locStart < 2) {  # Too few to fit, if this is 2, R2ADJ becomes NaN.
-    r0["LAMZNPT"] = 0
-  } else {
-    tmpMat = matrix(nrow=(locLast - locStart - 1), ncol=length(r0))
-    colnames(tmpMat) = names(r0)
-    for (i in locStart:(locLast - 2)) {
-      tmpMat[i - locStart + 1, 1:8] = Slope(x[i:locLast], log(y[i:locLast]))
-    }
-    tmpMat = tmpMat[is.finite(tmpMat[,"R2ADJ"]) & tmpMat[,"LAMZNPT"] > 2, , drop=FALSE]
-
-    if (nrow(tmpMat) > 0) {
-      maxAdjRsq = max(tmpMat[,"R2ADJ"])
-      OKs = ifelse(abs(maxAdjRsq - tmpMat[,"R2ADJ"]) < TOL, TRUE, FALSE)
-      nMax = max(tmpMat[OKs,"LAMZNPT"])
-      r0 = tmpMat[OKs & tmpMat[,"LAMZNPT"]==nMax,]
-      r0["CLSTP"] = exp(r0["b0"] - r0["LAMZ"]*max(x[is.finite(y)]))
-    } else {
-      r0["LAMZNPT"] = 0
-    }
-  }
+  admUpper = toupper(trimws(adm))
+  r0 = .findBestSlope(x, y, admUpper, TOL, Result)
+  r0["CLSTP"] = if (r0["LAMZNPT"] > 0) exp(r0["b0"] - r0["LAMZ"]*max(x[is.finite(y)])) else NA
 
   if (excludeDelta < 1) {
-    x1 = x[-n]
-    y1 = y[-n]
-    r1 = Result
-
-    if (toupper(trimws(adm)) == "BOLUS") {
-      locStart = which.max(y1)      # From Tmax (for Bolus)
-    } else {
-      locStart = which.max(y1) + 1  # From next to Tmax (for the others)
-    }
-    locLast = max(which(y1 > 0))    # Till non-zero concentration
-
-    if (locLast - locStart < 2) {  # Too few to fit, if this is 2, R2ADJ becomes NaN.
-      r1["LAMZNPT"] = 0
-    } else {
-      tmpMat = matrix(nrow=(locLast - locStart - 1), ncol=length(r1))
-      colnames(tmpMat) = names(r1)
-      for (i in locStart:(locLast - 2)) {
-        tmpMat[i - locStart + 1, 1:8] = Slope(x1[i:locLast], log(y1[i:locLast]))
-      }
-      tmpMat = tmpMat[tmpMat[,"LAMZNPT"] > 2, , drop=FALSE]
-
-      if (nrow(tmpMat) > 0) {
-        maxAdjRsq = max(tmpMat[,"R2ADJ"])
-        OKs = ifelse(abs(maxAdjRsq - tmpMat[,"R2ADJ"]) < TOL, TRUE, FALSE)
-        nMax = max(tmpMat[OKs,"LAMZNPT"])
-        r1 = tmpMat[OKs & tmpMat[,"LAMZNPT"]==nMax,]
-        r1["CLSTP"] = exp(r1["b0"] - r1["LAMZ"]*max(x[is.finite(y)]))
-      } else {
-        r1["LAMZNPT"] = 0
-      }
-    }
+    r1 = .findBestSlope(x[-n], y[-n], admUpper, TOL, Result)
+    r1["CLSTP"] = if (r1["LAMZNPT"] > 0) exp(r1["b0"] - r1["LAMZ"]*max(x[is.finite(y)])) else NA
 
     if (is.na(r1["R2ADJ"])) {
       Result = r0
@@ -110,4 +51,46 @@ BestSlope = function(x, y, adm="Extravascular", TOL=1e-4, excludeDelta=1)
   }
 
   return(Result)
+}
+
+# Helper: find best slope for a given set of points
+.findBestSlope = function(x, y, admUpper, TOL, defaultResult)
+{
+  r = defaultResult
+
+  if (admUpper == "BOLUS") {
+    locStart = which.max(y)      # From Tmax (for Bolus)
+  } else {
+    locStart = which.max(y) + 1  # From next to Tmax (for the others)
+  }
+  locLast = max(which(y > 0))    # Till non-zero concentration
+
+  if (is.na(locStart) | is.na(locLast)) {
+    r["LAMZNPT"] = 0
+    return(r)
+  }
+
+  if (locLast - locStart < 2) {  # Too few to fit, if this is 2, R2ADJ becomes NaN.
+    r["LAMZNPT"] = 0
+    return(r)
+  }
+
+  nSlopes = locLast - locStart - 1
+  tmpMat = matrix(nrow=nSlopes, ncol=length(r))
+  colnames(tmpMat) = names(r)
+  for (i in locStart:(locLast - 2)) {
+    tmpMat[i - locStart + 1, 1:8] = Slope(x[i:locLast], log(y[i:locLast]))
+  }
+  tmpMat = tmpMat[is.finite(tmpMat[,"R2ADJ"]) & tmpMat[,"LAMZNPT"] > 2, , drop=FALSE]
+
+  if (nrow(tmpMat) > 0) {
+    maxAdjRsq = max(tmpMat[,"R2ADJ"])
+    OKs = abs(maxAdjRsq - tmpMat[,"R2ADJ"]) < TOL
+    nMax = max(tmpMat[OKs,"LAMZNPT"])
+    r = tmpMat[OKs & tmpMat[,"LAMZNPT"]==nMax,]
+  } else {
+    r["LAMZNPT"] = 0
+  }
+
+  return(r)
 }

@@ -16,7 +16,7 @@ DetSlope = function(x, y, SubTitle="", sel.1=0, sel.2=0)
   OldOpt = options("locatorBell")
   on.exit(options(OldOpt))
   options(locatorBell = FALSE) # locator bell is annoying
-  
+
   SavedDev = dev.cur()
   dev.new()            # not to overwrite previous plot
   DefPar = par(bg="white")

@@ -1,9 +1,9 @@
 AUC = function(x, y, down="Linear")
 {
 # Author: Kyun-Seop Bae k@acr.kr
-# Last modification; 2017-07-24
+# Last modification: 2017-07-24
 # Called by: sNCA
-# Calls: UT
+# Calls: none
 # INPUT
 #    x: time or similar vector
 #    y: concentration or similar vector
@@ -12,20 +12,18 @@ AUC = function(x, y, down="Linear")
 # RETURNS
   Result = c(AUC = rep(NA_real_, n),   # vector of cumulative AUC
              AUMC = rep(NA_real_, n))  # vector of cumulative AUMC
-# Input check  
-  if (n != length(y) | !is.numeric(x) | !is.numeric(y)) return(Result)  
+# Input check
+  if (n != length(y) | !is.numeric(x) | !is.numeric(y)) return(Result)
 
-#
+  downUpper = toupper(trimws(down))
+
   Res = matrix(nrow=n, ncol=2) # temporary result
   Res[1,] = c(0, 0)
   for (i in 2:n) {
-    if (y[i] >= y[i - 1]) { # if upward
-      Res[i,1] = (x[i] - x[i-1])*(y[i] + y[i-1])/2 
+    if (y[i] >= y[i - 1] | downUpper == "LINEAR") {
+      Res[i,1] = (x[i] - x[i-1])*(y[i] + y[i-1])/2
       Res[i,2] = (x[i] - x[i-1])*(x[i]*y[i] + x[i-1]*y[i-1])/2
-    } else if (toupper(trimws(down)) == "LINEAR") { # downward & linear
-      Res[i,1] = (x[i] - x[i-1])*(y[i] + y[i-1])/2 
-      Res[i,2] = (x[i] - x[i-1])*(x[i]*y[i] + x[i-1]*y[i-1])/2
-    } else if (toupper(trimws(down)) == "LOG") { # downward & log
+    } else if (downUpper == "LOG") { # downward & log
       k = (log(y[i - 1]) - log(y[i]))/(x[i] - x[i-1]) # -k slope in y-log scale
       Res[i,1] = (y[i-1] - y[i])/k
       Res[i,2] = (x[i-1]*y[i-1] - x[i]*y[i])/k + (y[i-1] - y[i])/k/k

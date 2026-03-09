@@ -1,5 +1,21 @@
 \name{NEWS}
 \title{News for Package \pkg{NonCompart}}
+\section{Changes in version 0.7.1 (2026-03-09)}{
+  \itemize{
+    \item{Fixed a bug in \code{Slope} where sequential \code{is.finite} filtering could cause misaligned x and y vectors.}
+    \item{Fixed typo 'umul/mL' to 'umol/mL' in concentration unit normalization (\code{Unit}, \code{UnitUrine}).}
+    \item{Replaced unsafe \code{eval(parse(text=...))} with direct logical subsetting in \code{tblNCA} and \code{tblAUC}.}
+    \item{Extracted duplicated slope-finding logic in \code{BestSlope} into helper function \code{findBestSlope}.}
+    \item{Normalized \code{adm} parameter once at the top of \code{sNCA} instead of calling \code{toupper(trimws())} repeatedly.}
+    \item{Extracted shared unit conversion helpers (\code{normalizeConcUnit}, \code{convertVolUnit}) in \code{Unit.R}.}
+    \item{Reduced redundant \code{toupper(trimws(down))} calls in \code{AUC} and \code{IntAUC}.}
+  }
+}
+\section{Changes in version 0.7.0 (2023-11-15)}{
+  \itemize{
+    \item{Minor updates.}
+  }
+}
 \section{Changes in version 0.6.0 (2022-07-15)}{
   \itemize{
     \item{SS option for steady-state added in sNCA and tblNCA}

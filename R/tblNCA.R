@@ -7,7 +7,7 @@ tblNCA = function(concData, key="Subject", colTime="Time", colConc="conc", dose=
   for (i in 1:nKey) {
     if (sum(is.na(concData[,key[i]])) > 0) stop(paste(key[i], "has NA value, which is not allowed!"))
   }
-  
+
   IDs = unique(as.data.frame(concData[,key], ncol=nKey))
   nID = nrow(IDs)
 
@@ -20,15 +20,14 @@ tblNCA = function(concData, key="Subject", colTime="Time", colConc="conc", dose=
   Res = vector()
   for (i in 1:nID) {
     strHeader = paste0(key[1], "=", IDs[i, 1])
-    strCond = paste0("concData[concData$", key[1], "=='", IDs[i, 1], "'")
+    mask = concData[, key[1]] == IDs[i, 1]
     if (nKey > 1) {
       for (j in 2:nKey) {
-        strCond = paste0(strCond, " & concData$", key[j], "=='", IDs[i,j], "'")
+        mask = mask & concData[, key[j]] == IDs[i, j]
         strHeader = paste0(strHeader, ", ", key[j], "=", IDs[i,j])
       }
     }
-    strCond = paste0(strCond, ",]")
-    tData = eval(parse(text=strCond))
+    tData = concData[mask, , drop=FALSE]
     if (nrow(tData) > 0) {
       tRes = sNCA(tData[,colTime], tData[,colConc], dose=dose[i], adm=adm, dur=dur,
                   doseUnit=doseUnit, timeUnit=timeUnit, concUnit=concUnit, R2ADJ=R2ADJ,
@@ -42,5 +41,3 @@ tblNCA = function(concData, key="Subject", colTime="Time", colConc="conc", dose=
   attr(Res, "units") = c(rep("", nKey), attr(tRes, "units"))
   return(Res)
 }
-
-

@@ -17,8 +17,9 @@ Slope = function(x, y)
              LAMZLL = NA_real_, # Lower time for lambda z
              LAMZUL = NA_real_) # Upper time for lambda z
 # Input Check
-  x = x[is.finite(x) & is.finite(y)]
-  y = y[is.finite(x) & is.finite(y)]
+  ok = is.finite(x) & is.finite(y)
+  x = x[ok]
+  y = y[ok]
   n = length(x)
   if (n == 1 | n != length(y) | !is.numeric(x) | !is.numeric(y)) {
     return(Result)  # return default
