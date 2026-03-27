@@ -8,11 +8,11 @@ sNCA(x, y, dose = 0, adm = "Extravascular", dur = 0, doseUnit = "mg", timeUnit =
      Keystring="", excludeDelta = 1)
 }
 \arguments{
-  \item{x}{usually time}
-  \item{y}{usually concentration}
-  \item{dose}{given amount, not amount per body weight}
+  \item{x}{usually time, a vector}
+  \item{y}{usually concentration, a vector}
+  \item{dose}{given amount, not amount per body weight, a scalar}
   \item{adm}{one of \code{"Bolus"} or \code{"Infusion"} or \code{"Extravascular"} to indicate drug administration mode}
-  \item{dur}{duration of infusion}
+  \item{dur}{duration of infusion, a scalar}
   \item{doseUnit}{unit of dose}
   \item{timeUnit}{unit of time}
   \item{concUnit}{unit of concentration}

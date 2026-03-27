@@ -8,13 +8,19 @@ tblNCA = function(concData, key="Subject", colTime="Time", colConc="conc", dose=
     if (sum(is.na(concData[,key[i]])) > 0) stop(paste(key[i], "has NA value, which is not allowed!"))
   }
 
-  IDs = unique(as.data.frame(concData[,key], ncol=nKey))
+  IDs = unique(as.data.frame(concData[, key], ncol=nKey))
   nID = nrow(IDs)
 
   if (length(dose) == 1) {
     dose = rep(dose, nID)
   } else if (length(dose) != nID) {
     stop("Count of dose does not match with number of NCAs!")
+  }
+
+  if (length(dur) == 1) {
+    dur = rep(dur, nID)
+  } else if (length(dur) != nID) {
+    stop("Count of dur does not match with number of NCAs!")
   }
 
   Res = vector()
@@ -29,7 +35,7 @@ tblNCA = function(concData, key="Subject", colTime="Time", colConc="conc", dose=
     }
     tData = concData[mask, , drop=FALSE]
     if (nrow(tData) > 0) {
-      tRes = sNCA(tData[,colTime], tData[,colConc], dose=dose[i], adm=adm, dur=dur,
+      tRes = sNCA(tData[,colTime], tData[,colConc], dose=dose[i], adm=adm, dur=dur[i],
                   doseUnit=doseUnit, timeUnit=timeUnit, concUnit=concUnit, R2ADJ=R2ADJ,
                   down=down, MW=MW, SS=SS, iAUC=iAUC, Keystring=strHeader, excludeDelta=excludeDelta)
       Res = rbind(Res, tRes)

@@ -1,5 +1,10 @@
 \name{NEWS}
 \title{News for Package \pkg{NonCompart}}
+\section{Changes in version 0.7.2 (2026-03-27)}{
+  \itemize{
+    \item{tblNCA supports vector input for dur argument.}
+  }
+}
 \section{Changes in version 0.7.1 (2026-03-09)}{
   \itemize{
     \item{Fixed a bug in \code{Slope} where sequential \code{is.finite} filtering could cause misaligned x and y vectors.}
@@ -19,10 +24,6 @@
 \section{Changes in version 0.6.0 (2022-07-15)}{
   \itemize{
     \item{SS option for steady-state added in sNCA and tblNCA}
-  }
-}
-\section{Changes in version 0.6.0 (2022-07-15)}{
-  \itemize{
     \item{tblAUC, gAUC, gInterpol functions are added for general purpose AUC such as AUC for pharmacodynamic(PD) data.}
   }
 }
@@ -51,7 +52,7 @@
 }
 \section{Changes in version 0.4.7 (2020-01-02)}{
   \itemize{
-    \item{When impossible to determining slope, it skipe.}
+    \item{When it is impossible to determine slope, it skips.}
   }
 }
 \section{Changes in version 0.4.6 (2020-01-02)}{

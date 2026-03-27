@@ -1,7 +1,8 @@
 gIntAUC = function(x, y, t1, t2, Outer = "NEAREST")
 {
-  x = x[is.finite(x)]
-  y = y[is.finite(y)]
+  ok = is.finite(x) & is.finite(y)
+  x = x[ok]
+  y = y[ok]
   n = length(x)  
   if (n == 0 | n != length(y)) return(NA_real_)
   if (is.unsorted(x)) stop("x vector should be sorted!")
