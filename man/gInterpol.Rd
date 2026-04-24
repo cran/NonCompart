@@ -23,7 +23,7 @@ x = 1:10 + 0.1
 y = -2*x + 40.2
 gInterpol(x, y, 1.5)
 gInterpol(x, y, 0.5) # Out of range, Left
-gInterpol(x, y, 11) # Out of range, Left
+gInterpol(x, y, 11) # Out of range, Right
 }
 \keyword{interpolation}
 \keyword{interval AUC}

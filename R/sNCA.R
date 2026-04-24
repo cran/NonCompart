@@ -1,4 +1,7 @@
-sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUnit="h", concUnit="ug/L", iAUC="", down="Linear", R2ADJ=0.7, MW=0, SS=FALSE, Keystring="", excludeDelta=1)
+sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", 
+                timeUnit="h", concUnit="ug/L", iAUC="", down="Linear", 
+                R2ADJ=0.7, MW=0, SS=FALSE, Keystring="", excludeDelta=1, 
+                UsePoints=NULL)
 {
   if (!(is.numeric(x) & is.numeric(y) & is.numeric(dose) & is.numeric(dur) & is.character(adm) & is.character(down))) stop("Check input types!")
 
@@ -15,9 +18,9 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
   isBolus = (admUpper == "BOLUS")
 
   RetNames1 = c("b0", "CMAX", "CMAXD", "TMAX", "TLAG", "CLST", "CLSTP", "TLST", "LAMZHL", "LAMZ",
-             "LAMZLL", "LAMZUL", "LAMZNPT", "CORRXY", "R2", "R2ADJ", "AUCLST", "AUCALL",
-             "AUCIFO", "AUCIFOD", "AUCIFP", "AUCIFPD", "AUCPEO", "AUCPEP",
-             "AUMCLST", "AUMCIFO", "AUMCIFP", "AUMCPEO", "AUMCPEP")
+                "LAMZLL", "LAMZUL", "LAMZNPT", "CORRXY", "R2", "R2ADJ", "AUCLST", "AUCALL",
+                "AUCIFO", "AUCIFOD", "AUCIFP", "AUCIFPD", "AUCPEO", "AUCPEP",
+                "AUMCLST", "AUMCIFO", "AUMCIFP", "AUMCPEO", "AUMCPEP")
   if (isBolus) {
     RetNames1 = union(RetNames1, c("C0", "AUCPBEO", "AUCPBEP"))
   }
@@ -44,8 +47,6 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
     if (uY == 0) {
       Res["TLAG"] = NA
       Res["AUCALL"] = 0
-    } else if (which(y==uY)[1] > 1) {
-      Res["TLAG"] = x[which(y==uY) - 1]
     } else {
       Res["TLAG"] = 0
     }
@@ -57,18 +58,18 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
     if (is.data.frame(iAUC)) { # eg iAUC = data.frame(Name=c("AUC[0-12h]","AUC[0-24h]"), Start=c(0,0), End=c(12,24))
       niAUC = nrow(iAUC)
       if (niAUC > 0) {
-        RetNames1 = union(RetNames1, as.character(iAUC[,"Name"]))
+        RetNames1 = union(RetNames1, as.character(iAUC[, "Name"]))
         for (i in 1:niAUC) {
-          if (all(y == 0) & min(x, na.rm=T) <= min(0, iAUC[i,"Start"]) & max(x, na.rm=T) >= iAUC[i,"End"]) {
-            Res[as.character(iAUC[i,"Name"])] = 0
+          if (all(y == 0) & min(x, na.rm=T) <= min(0, iAUC[i, "Start"]) & max(x, na.rm=T) >= iAUC[i, "End"]) {
+            Res[as.character(iAUC[i, "Name"])] = 0
           } else if (isBolus) {
             if (sum(x == 0) == 0) {
               x2 = c(0, x)
               y2 = c(uY, y)
             }
-            Res[as.character(iAUC[i,"Name"])] = IntAUC(x2, y2, iAUC[i,"Start"], iAUC[i,"End"], Res, down=down)
+            Res[as.character(iAUC[i, "Name"])] = IntAUC(x2, y2, iAUC[i, "Start"], iAUC[i, "End"], Res, down=down)
           } else {
-            Res[as.character(iAUC[i,"Name"])] = IntAUC(x, y, iAUC[i,"Start"], iAUC[i,"End"], Res, down=down)
+            Res[as.character(iAUC[i, "Name"])] = IntAUC(x, y, iAUC[i, "Start"], iAUC[i, "End"], Res, down=down)
           }
           tRowNames = rownames(Units)
           Units = rbind(Units, Units["AUCLST",])
@@ -78,9 +79,9 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
     } else {
       niAUC = 0
     }
-    for (i in 1:length(Res)) Res[i] = Res[i] * Units[names(Res[i]),2]
+    for (i in 1:length(Res)) Res[i] = Res[i] * Units[names(Res[i]), 2]
 
-    attr(Res, "units") = c(Units[RetNames1,1], rep(Units["AUCLST",1], niAUC))
+    attr(Res, "units") = c(Units[RetNames1, 1], rep(Units["AUCLST", 1], niAUC))
 
     return(Res)
   }
@@ -116,20 +117,27 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
     }
   }
 
-  tRes = BestSlope(x1, y1, adm, excludeDelta=excludeDelta)
-  if (R2ADJ > 0) {
-    if (tRes["LAMZNPT"] < 2) {
-      tRes = DetSlope(x1, y1, SubTitle=Keystring)
-    } else if (tRes["R2ADJ"] < R2ADJ) {
-      tRes = DetSlope(x1, y1, SubTitle=Keystring, sel.1=which(x1 == tRes["LAMZLL"]), sel.2=which(x1 == tRes["LAMZUL"]))
+
+  if (length(UsePoints) > 1) {
+    tRes = Slope(x[UsePoints], log(y[UsePoints])) # y[UsePoints] should not cotain zero.
+    tRes["CLSTP"] = exp(tRes["b0"] - tRes["LAMZ"]*max(x[is.finite(log(y[UsePoints]))]))
+    attr(tRes, "UsedPoints") = UsePoints
+  } else {
+    tRes = BestSlope(x1, y1, adm, excludeDelta=excludeDelta)
+    if (R2ADJ > 0) {
+      if (tRes["LAMZNPT"] < 2) {
+        tRes = DetSlope(x1, y1, SubTitle=Keystring)
+      } else if (tRes["R2ADJ"] < R2ADJ) {
+        tRes = DetSlope(x1, y1, SubTitle=Keystring, sel.1=which(x1 == tRes["LAMZLL"]), sel.2=which(x1 == tRes["LAMZUL"]))
+      }
     }
+    attr(tRes, "UsedPoints") = attr(tRes, "UsedPoints") + which(x==tRes["LAMZLL"]) - which(x1==tRes["LAMZLL"]) ###
   }
 
-  attr(tRes, "UsedPoints") = attr(tRes, "UsedPoints") + which(x==tRes["LAMZLL"]) - which(x1==tRes["LAMZLL"]) ###
   Res[c("R2", "R2ADJ", "LAMZNPT", "LAMZ", "b0", "CORRXY", "LAMZLL", "LAMZUL", "CLSTP")] = tRes
   tabAUC = AUC(x3, y3, down)
-  Res[c("AUCLST","AUMCLST")] = tabAUC[length(x3),]
-  Res["AUCALL"] = AUC(x2, y2, down)[length(x2),1]
+  Res[c("AUCLST", "AUMCLST")] = tabAUC[length(x3),]
+  Res["AUCALL"] = AUC(x2, y2, down)[length(x2), 1]
   Res["LAMZHL"] = log(2)/Res["LAMZ"]
   Res["TMAX"] = x[which.max(y)][1]
   Res["CMAX"] = max(y)
@@ -207,10 +215,10 @@ sNCA = function(x, y, dose=0, adm="Extravascular", dur=0, doseUnit="mg", timeUni
   if (is.data.frame(iAUC)) { # eg iAUC = data.frame(Name=c("AUC[0-12h]","AUC[0-24h]"), Start=c(0,0), End=c(12,24))
     niAUC = nrow(iAUC)
     if (niAUC > 0) {
-       RetNames1 = union(RetNames1, as.character(iAUC[,"Name"]))
+       RetNames1 = union(RetNames1, as.character(iAUC[, "Name"]))
        for (i in 1:niAUC) {
-        if (isBolus) Res[as.character(iAUC[i,"Name"])] = IntAUC(x2, y2, iAUC[i,"Start"], iAUC[i,"End"], Res, down=down)
-        else Res[as.character(iAUC[i,"Name"])] = IntAUC(x, y, iAUC[i,"Start"], iAUC[i,"End"], Res, down=down)
+        if (isBolus) Res[as.character(iAUC[i, "Name"])] = IntAUC(x2, y2, iAUC[i, "Start"], iAUC[i, "End"], Res, down=down)
+        else Res[as.character(iAUC[i, "Name"])] = IntAUC(x, y, iAUC[i, "Start"], iAUC[i, "End"], Res, down=down)
         tRowNames = rownames(Units)
         Units = rbind(Units, Units["AUCLST",])
         rownames(Units) = c(tRowNames, iAUC[i, "Name"])

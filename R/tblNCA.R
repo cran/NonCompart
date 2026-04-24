@@ -1,6 +1,6 @@
 tblNCA = function(concData, key="Subject", colTime="Time", colConc="conc", dose=0,
          adm="Extravascular", dur=0, doseUnit="mg", timeUnit="h", concUnit="ug/L",
-         down="Linear", R2ADJ=0, MW=0, SS=FALSE, iAUC="", excludeDelta=1)
+         down="Linear", R2ADJ=0, MW=0, SS=FALSE, iAUC="", excludeDelta=1, UsePoints=NULL)
 {
   class(concData) = "data.frame"
   nKey = length(key)
@@ -23,27 +23,39 @@ tblNCA = function(concData, key="Subject", colTime="Time", colConc="conc", dose=
     stop("Count of dur does not match with number of NCAs!")
   }
 
+  if (length(UsePoints) == nID) {
+    R2ADJ = 0 # suppress R2ADJ option when used with UsePoints
+  }
+      
   Res = vector()
+  UsedPoints = list()
   for (i in 1:nID) {
     strHeader = paste0(key[1], "=", IDs[i, 1])
     mask = concData[, key[1]] == IDs[i, 1]
     if (nKey > 1) {
       for (j in 2:nKey) {
         mask = mask & concData[, key[j]] == IDs[i, j]
-        strHeader = paste0(strHeader, ", ", key[j], "=", IDs[i,j])
+        strHeader = paste0(strHeader, ", ", key[j], "=", IDs[i, j])
       }
     }
     tData = concData[mask, , drop=FALSE]
     if (nrow(tData) > 0) {
-      tRes = sNCA(tData[,colTime], tData[,colConc], dose=dose[i], adm=adm, dur=dur[i],
+      if (length(UsePoints) == nID) {
+        tUse = UsePoints[[i]]
+      } else {
+        tUse = NULL
+      }
+      tRes = sNCA(tData[, colTime], tData[, colConc], dose=dose[i], adm=adm, dur=dur[i],
                   doseUnit=doseUnit, timeUnit=timeUnit, concUnit=concUnit, R2ADJ=R2ADJ,
-                  down=down, MW=MW, SS=SS, iAUC=iAUC, Keystring=strHeader, excludeDelta=excludeDelta)
+                  down=down, MW=MW, SS=SS, iAUC=iAUC, Keystring=strHeader, excludeDelta=excludeDelta, UsePoints=tUse)
       Res = rbind(Res, tRes)
+      UsedPoints[[i]] = attr(tRes, "UsedPoints")
     }
   }
   Res = cbind(IDs, Res)
   rownames(Res) = NULL
   colnames(Res)[1:nKey] = key
   attr(Res, "units") = c(rep("", nKey), attr(tRes, "units"))
+  attr(Res, "UsedPoints") = UsedPoints
   return(Res)
 }

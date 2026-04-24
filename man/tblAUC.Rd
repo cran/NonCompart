@@ -1,7 +1,7 @@
 \name{tblAUC}
 \alias{tblAUC}
 \title{Table output of gAUCs}
-\description{Do multiple AUCs and returns a result table. See \code{gNCA} for more detail i.e. \code{iAUC}}
+\description{Do multiple AUCs and returns a result table. See \code{gAUC} for more detail i.e. \code{iAUC}}
 \usage{
 tblAUC(Data, key = "Subject", colX = "Time", colY = "Y", iAUC = "",
        Ymax = "Emax", XofYmax = "TEmax", AUCname = "AUEClast", Outer = "NEAREST")

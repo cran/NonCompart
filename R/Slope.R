@@ -2,20 +2,20 @@ Slope = function(x, y)
 {
 # Author: Kyun-Seop Bae k@acr.kr
 # Last modification: 2017.7.20
-# Called by: BestSlope
+# Called by: BestSlope, DetSlope
 # Calls: none except base
 # INPUT
 #    x: time
 #    y: natural log of concentration
 # RETURNS
-  Result = c(R2 = NA_real_,     # R square
-             R2ADJ = NA_real_,  # R square adjusted
-             LAMZNPT = 0,       # Number of points for Lambda z
-             LAMZ = NA_real_,   # Lambda z, terminal slope as a positive number
-             b0 = NA_real_,     # intercept from OLS, i.e. simple linear regression
-             CORRXY = NA_real_, # Correlation of x, y
-             LAMZLL = NA_real_, # Lower time for lambda z
-             LAMZUL = NA_real_) # Upper time for lambda z
+  Result = c(R2      = NA_real_, # R square
+             R2ADJ   = NA_real_, # R square adjusted
+             LAMZNPT = 0,        # Number of points for Lambda z
+             LAMZ    = NA_real_, # Lambda z, terminal slope as a positive number
+             b0      = NA_real_, # intercept from OLS, i.e. simple linear regression
+             CORRXY  = NA_real_, # Correlation of x, y
+             LAMZLL  = NA_real_, # Lower time for lambda z
+             LAMZUL  = NA_real_) # Upper time for lambda z
 # Input Check
   ok = is.finite(x) & is.finite(y)
   x = x[ok]

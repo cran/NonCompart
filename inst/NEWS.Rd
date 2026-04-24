@@ -1,5 +1,10 @@
 \name{NEWS}
 \title{News for Package \pkg{NonCompart}}
+\section{Changes in version 0.8.0 (2026-04-26)}{
+  \itemize{
+    \item{sNCA and tblNCA support predetermined indices of points (UsePoints) to calculate terminal slope.}
+  }
+}
 \section{Changes in version 0.7.2 (2026-03-27)}{
   \itemize{
     \item{tblNCA supports vector input for dur argument.}

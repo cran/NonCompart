@@ -5,7 +5,7 @@
 \usage{
 sNCA(x, y, dose = 0, adm = "Extravascular", dur = 0, doseUnit = "mg", timeUnit = "h", 
      concUnit = "ug/L", iAUC = "", down = "Linear", R2ADJ = 0.7, MW = 0, SS = FALSE, 
-     Keystring="", excludeDelta = 1)
+     Keystring="", excludeDelta = 1, UsePoints = NULL)
 }
 \arguments{
   \item{x}{usually time, a vector}
@@ -23,6 +23,7 @@ sNCA(x, y, dose = 0, adm = "Extravascular", dur = 0, doseUnit = "mg", timeUnit =
   \item{SS}{if steady-state, this should be TRUE. AUCLST (AUClast) is used instead of AUCIFO (AUCinf) for the calculation of Vz (VZFO, VZO), CL (CLFO, CLO), and Vdss (VSSO).}
   \item{Keystring}{a text string to be shown at the plot in case of manual selection of terminal slope}
   \item{excludeDelta}{Improvement of R2ADJ larger than this value could exclude the last point. Default value 1 is for the compatibility with other software.}
+  \item{UsePoints}{Indices of points to calculate terminal slope. Vaules of use points should not be zero. Use only when automatic determination is not satisfactory. If this is used, R2ADJ option is ignored.}
 }
 \details{
   This replaced previous \code{IndiNCA}. Author recommends to use \code{excludeDelta} option with about 0.3.
@@ -75,6 +76,8 @@ sNCA(x, y, dose = 0, adm = "Extravascular", dur = 0, doseUnit = "mg", timeUnit =
   \item{CLFP}{CLP for extravascular administration, CLP/F, F is bioavailability}
   \item{VSSO}{volume of distribution at steady state using CLST, for intravascular administration only}
   \item{VSSP}{volume of distribution at steady state using CLSTP, for intravascular administration only}
+  \item{units}{An attribute to show units}
+  \item{UsedPoints}{An attribute to show indices of used points}
 }
 \references{
 Gabrielsson J, Weiner D. Pharmacokinetic and Pharmacodynamic Data Analysis - Concepts and Applications. 5th ed. 2016.

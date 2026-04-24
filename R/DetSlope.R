@@ -1,4 +1,4 @@
-# interactive selcting points for terminal slope
+# interactive selecting points for terminal slope
 DetSlope = function(x, y, SubTitle="", sel.1=0, sel.2=0)
 {
 # Check input

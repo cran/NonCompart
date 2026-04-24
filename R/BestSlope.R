@@ -1,14 +1,14 @@
 BestSlope = function(x, y, adm="Extravascular", TOL=1e-4, excludeDelta=1)
 {
-  Result = c(R2 = NA,     # R square
-             R2ADJ = NA,  # R square adjusted
-             LAMZNPT = 0, # Number of points for Lambda z
-             LAMZ = NA,   # Lambda z, terminal slope as a positive number
-             b0 = NA,     # intercept from OLS, i.e. simple linear regression
-             CORRXY = NA, # Correlation of x, y
-             LAMZLL = NA, # Lower time for lambda z
-             LAMZUL = NA, # Upper time for lambda z
-             CLSTP = NA)  # Clast predicted
+  Result = c(R2      = NA_real_, # R square
+             R2ADJ   = NA_real_, # R square adjusted
+             LAMZNPT = 0,        # Number of points for Lambda z
+             LAMZ    = NA_real_, # Lambda z, terminal slope as a positive number
+             b0      = NA_real_, # intercept from OLS, i.e. simple linear regression
+             CORRXY  = NA_real_, # Correlation of x, y
+             LAMZLL  = NA_real_, # Lower time for lambda z
+             LAMZUL  = NA_real_, # Upper time for lambda z
+             CLSTP   = NA_real_) # Clast predicted
 # Input Check
   if (excludeDelta < 0) stop("Option excludeDelta should be non-negative!")
   n = length(x)
@@ -81,13 +81,13 @@ BestSlope = function(x, y, adm="Extravascular", TOL=1e-4, excludeDelta=1)
   for (i in locStart:(locLast - 2)) {
     tmpMat[i - locStart + 1, 1:8] = Slope(x[i:locLast], log(y[i:locLast]))
   }
-  tmpMat = tmpMat[is.finite(tmpMat[,"R2ADJ"]) & tmpMat[,"LAMZNPT"] > 2, , drop=FALSE]
+  tmpMat = tmpMat[is.finite(tmpMat[, "R2ADJ"]) & tmpMat[, "LAMZNPT"] > 2, , drop=FALSE]
 
   if (nrow(tmpMat) > 0) {
-    maxAdjRsq = max(tmpMat[,"R2ADJ"])
-    OKs = abs(maxAdjRsq - tmpMat[,"R2ADJ"]) < TOL
-    nMax = max(tmpMat[OKs,"LAMZNPT"])
-    r = tmpMat[OKs & tmpMat[,"LAMZNPT"]==nMax,]
+    maxAdjRsq = max(tmpMat[, "R2ADJ"])
+    OKs = abs(maxAdjRsq - tmpMat[, "R2ADJ"]) < TOL
+    nMax = max(tmpMat[OKs, "LAMZNPT"])
+    r = tmpMat[OKs & tmpMat[, "LAMZNPT"] == nMax,]
   } else {
     r["LAMZNPT"] = 0
   }
